@@ -1,0 +1,240 @@
+package xyz.msws.treecreation.trees;
+
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.IllegalFormatException;
+import java.util.Map;
+import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.util.Vector;
+
+import xyz.msws.treecreation.exceptions.InvalidBlockException;
+
+/**
+ * Responsible for encapsulating a tree's block type, offset, and data.
+ * 
+ * @author imodm
+ *
+ */
+@SerializableAs("TreeBlock")
+public class TreeBlock implements ConfigurationSerializable {
+	private BlockType type = BlockType.DEFAULT;
+	private BlockData data;
+	private Vector offset;
+
+	private static EnumSet<Material> leaves = EnumSet.of(Material.OAK_LEAVES, Material.ACACIA_LEAVES,
+			Material.BIRCH_LEAVES, Material.DARK_OAK_LEAVES, Material.JUNGLE_LEAVES, Material.SPRUCE_LEAVES);
+	private static EnumSet<Material> trunks = EnumSet.of(Material.ACACIA_LOG, Material.BIRCH_LOG, Material.DARK_OAK_LOG,
+			Material.JUNGLE_LOG, Material.OAK_LOG, Material.SPRUCE_LOG, Material.STRIPPED_ACACIA_LOG,
+			Material.STRIPPED_BIRCH_LOG, Material.STRIPPED_DARK_OAK_LOG, Material.STRIPPED_JUNGLE_LOG,
+			Material.STRIPPED_SPRUCE_LOG);
+
+	/**
+	 * Categorizes blocks based on where they are on the tree
+	 * 
+	 * @author imodm
+	 *
+	 */
+	public enum BlockType {
+		DEFAULT, TRUNK, LEAF, DECOR, OTHER;
+	}
+
+	/**
+	 * Clones and adds the offset and returns the result
+	 * 
+	 * @param origin
+	 * @return
+	 */
+	public Location getTargetLocation(Location origin) {
+		return origin.clone().add(offset);
+	}
+
+	/**
+	 * Returns the offset that the block has
+	 * 
+	 * @return
+	 */
+	public Vector getOffset() {
+		return offset;
+	}
+
+	/**
+	 * Creates a new TreeBlock and attempts to assign a {@link BlockType} according
+	 * to {@link TreeBlock#guessType(Material)}
+	 * 
+	 * @param mat    Block material to use, use tertiary constructor to specify data
+	 * @param offset Offset location relative to origin
+	 */
+	public TreeBlock(Material mat, Vector offset) {
+		this(Bukkit.createBlockData(mat), offset);
+	}
+
+	/**
+	 * Creates a new TreeBlock and attempts to assign a {@link BlockType} according
+	 * to {@link TreeBlock#guessType(Material)}
+	 * 
+	 * @param mat    Block data to use
+	 * @param offset Offset location relative to origin
+	 */
+	public TreeBlock(BlockData data, Vector offset) {
+		this(data, offset, guessType(data.getMaterial()));
+		this.data = data;
+		this.offset = offset;
+		this.type = guessType(data.getMaterial());
+	}
+
+	/**
+	 * Creates a new TreeBlock and attempts to assign a {@link BlockType} according
+	 * to {@link TreeBlock#guessType(Material)}
+	 * 
+	 * @param mat    Block data to use
+	 * @param offset Offset location relative to origin
+	 * @param type   Block type
+	 */
+	public TreeBlock(BlockData data, Vector offset, BlockType type) {
+		this.data = data;
+		this.offset = offset;
+		this.type = type;
+	}
+
+	/**
+	 * Constructor to support {@link ConfigurationSerializable}
+	 * 
+	 * @param data
+	 * @throws InvalidBlockException
+	 */
+	public static TreeBlock deserialize(Map<String, Object> data) throws InvalidBlockException {
+		for (String s : new String[] { "type", "offset", "data" }) {
+			if (!data.containsKey("type"))
+				throw new InvalidBlockException("Block " + s + " is missing");
+		}
+
+		String current = (String) data.get("type");
+		BlockType type = BlockType.DEFAULT;
+		try {
+			type = BlockType.valueOf(current == null ? current : "DEFAULT");
+		} catch (IllegalFormatException e) {
+			type = BlockType.DEFAULT;
+			Bukkit.getLogger().log(Level.SEVERE, "Could not parse block type " + type);
+		}
+
+		current = (String) data.get("offset");
+
+		if (current == null || current.split(",").length != 3)
+			throw new InvalidBlockException("Block offset is invalid");
+		double x = Double.parseDouble(current.split(",")[0]), y = Double.parseDouble(current.split(",")[1]),
+				z = Double.parseDouble(current.split(",")[2]);
+
+		Vector offset = new Vector(x, y, z);
+
+		current = (String) data.get("data");
+		BlockData blockData = Bukkit.createBlockData(current);
+		return new TreeBlock(blockData, offset, type);
+	}
+
+	/**
+	 * Attempts to match the Material type to the probable part of the Tree If no
+	 * valid match is found {@link BlockType#DEFAULT} is returned.
+	 * 
+	 * @param mat
+	 * @return
+	 */
+	public static BlockType guessType(Material mat) {
+		if (leaves.contains(mat))
+			return BlockType.LEAF;
+		if (trunks.contains(mat))
+			return BlockType.TRUNK;
+		return BlockType.DEFAULT;
+	}
+
+	/**
+	 * Gets the {@link BlockType}
+	 * 
+	 * @return
+	 */
+	public BlockType getType() {
+		return type;
+	}
+
+	/**
+	 * Gets the blockdata
+	 * 
+	 * @return
+	 */
+	public BlockData getBlock() {
+		return data;
+	}
+
+	/**
+	 * Places the block relative to the origin
+	 * 
+	 * @param origin
+	 */
+	public void place(Location origin) {
+		Location target = getTargetLocation(origin);
+		target.getBlock().setBlockData(data);
+	}
+
+	/**
+	 * Returns a string representation of the block
+	 */
+	@Override
+	public String toString() {
+		return String.format("TreeBlock{%s;%s;%s}", this.data.getAsString(), this.offset.toString(),
+				this.type.toString());
+	}
+
+	/**
+	 * Parses and returns a {@link TreeBlock} instance from a string. See
+	 * {@link TreeBlock#toString()}
+	 * 
+	 * @param s String to parse
+	 * @return
+	 * @throws InvalidBlockException
+	 */
+	public static TreeBlock fromString(String s) throws InvalidBlockException {
+		if (s == null || s.isEmpty() || !s.startsWith("TreeBlock{"))
+			throw new InvalidBlockException(s + " is null or invalid data");
+		if (s.split(";").length != 3)
+			throw new InvalidBlockException("Invalid block data: " + s);
+
+		s = s.substring("TreeBlock{".length());
+
+		BlockData data = Bukkit.createBlockData(s.split(";")[0]);
+		String current = s.split(";")[1];
+		if (current == null || current.split(",").length != 3)
+			throw new InvalidBlockException("Block offset is invalid");
+		double x = Double.parseDouble(current.split(",")[0]), y = Double.parseDouble(current.split(",")[1]),
+				z = Double.parseDouble(current.split(",")[2]);
+		Vector off = new Vector(x, y, z);
+
+		BlockType type = BlockType.valueOf(s.split(";")[2]);
+		return new TreeBlock(data, off, type);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj == null || !(obj instanceof TreeBlock))
+			return false;
+		TreeBlock block = (TreeBlock) obj;
+		return block.getBlock().matches(this.getBlock()) && block.getOffset().equals(this.getOffset());
+	}
+
+	@Override
+	public Map<String, Object> serialize() {
+		Map<String, Object> data = new HashMap<>();
+		data.put("offset", offset.toString());
+		data.put("data", this.data.getAsString());
+		data.put("type", this.type.toString());
+		return data;
+	}
+
+}
