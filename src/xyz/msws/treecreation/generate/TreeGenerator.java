@@ -1,7 +1,9 @@
-package xyz.msws.treecreation;
+package xyz.msws.treecreation.generate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import xyz.msws.treecreation.api.TreeAPI;
@@ -16,6 +18,8 @@ public abstract class TreeGenerator {
 
 	private long startTime, endTime;
 
+	protected List<GeneratorModifier> genModifiers = new ArrayList<>();
+
 	public TreeGenerator(AbstractTree tree, Location origin) {
 		this.tree = tree;
 		this.origin = origin;
@@ -27,11 +31,25 @@ public abstract class TreeGenerator {
 			@Override
 			public void run() {
 				if (pass() >= 1f) {
-					this.cancel();
 					endTime = System.currentTimeMillis();
+					this.cancel();
+					return;
 				}
+				genModifiers.forEach(m -> m.modify(TreeGenerator.this));
 			}
 		}.runTaskTimer(plugin, 0, period);
+	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public long getEndTime() {
+		return endTime;
+	}
+
+	public boolean finished() {
+		return generated;
 	}
 
 	public abstract float pass();

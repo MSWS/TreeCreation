@@ -1,4 +1,4 @@
-package xyz.msws.treecreation;
+package xyz.msws.treecreation.generate;
 
 import java.util.List;
 
