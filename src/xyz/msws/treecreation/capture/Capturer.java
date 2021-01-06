@@ -75,14 +75,14 @@ public class Capturer implements Listener {
 				plugin.getMSG().primary);
 
 		YamlConfiguration file = YamlConfiguration.loadConfiguration(target);
-		Map<BlockType, List<TreeBlock>> bs = new HashMap<>();
+		Map<BlockType, List<String>> bs = new HashMap<>();
 		for (TreeBlock tb : blocks) {
-			List<TreeBlock> b = bs.getOrDefault(tb.getType(), new ArrayList<>());
-			b.add(tb);
+			List<String> b = bs.getOrDefault(tb.getType(), new ArrayList<>());
+			b.add(tb.toString(false));
 			bs.put(tb.getType(), b);
 		}
 
-		for (Entry<BlockType, List<TreeBlock>> entry : bs.entrySet()) {
+		for (Entry<BlockType, List<String>> entry : bs.entrySet()) {
 			file.set("Blocks." + entry.getKey().toString(), entry.getValue());
 		}
 

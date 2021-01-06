@@ -2,6 +2,9 @@ package xyz.msws.treecreation.trees;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import org.bukkit.Location;
 
 import xyz.msws.treecreation.trees.modifiers.Modifier;
 
@@ -14,6 +17,11 @@ public class TreeFactory {
 	public TreeFactory(AbstractTree tree) {
 		this.tree = tree;
 		this.rawTree = tree;
+	}
+
+	public TreeFactory(Location origin) {
+		this.rawTree = new NativeTree();
+
 	}
 
 	public TreeFactory modify(Modifier modify) {

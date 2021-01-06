@@ -186,8 +186,19 @@ public class TreeBlock implements ConfigurationSerializable {
 	 */
 	@Override
 	public String toString() {
-		return String.format("TreeBlock{%s;%s;%s}", this.data.getAsString(), this.offset.toString(),
-				this.type.toString());
+		return toString(true);
+	}
+
+	/**
+	 * Returns a string representation of the block, depending on the data structure
+	 * it may be desirable to ommit the {@link BlockType}
+	 * 
+	 * @param includeType True to include the blocktype, false to exclude
+	 * @return
+	 */
+	public String toString(boolean includeType) {
+		return String.format(includeType ? "TreeBlock{%s;%s;%s}" : "TreeBlock{%s;%s}", this.data.getAsString(),
+				this.offset.toString(), this.type.toString());
 	}
 
 	/**
@@ -199,12 +210,24 @@ public class TreeBlock implements ConfigurationSerializable {
 	 * @throws InvalidBlockException
 	 */
 	public static TreeBlock fromString(String s) throws InvalidBlockException {
+		return fromString(s, null);
+	}
+
+	/**
+	 * Parses and returns a {@link TreeBlock} instance from a string. See
+	 * {@link TreeBlock#toString()}
+	 * 
+	 * @param s String to parse
+	 * @return
+	 * @throws InvalidBlockException
+	 */
+	public static TreeBlock fromString(String s, BlockType type) throws InvalidBlockException {
 		if (s == null || s.isEmpty() || !s.startsWith("TreeBlock{"))
 			throw new InvalidBlockException(s + " is null or invalid data");
-		if (s.split(";").length != 3)
+		if (s.split(";").length < 2)
 			throw new InvalidBlockException("Invalid block data: " + s);
 
-		s = s.substring("TreeBlock{".length());
+		s = s.substring("TreeBlock{".length(), s.length() - 1);
 
 		BlockData data = Bukkit.createBlockData(s.split(";")[0]);
 		String current = s.split(";")[1];
@@ -213,9 +236,11 @@ public class TreeBlock implements ConfigurationSerializable {
 		double x = Double.parseDouble(current.split(",")[0]), y = Double.parseDouble(current.split(",")[1]),
 				z = Double.parseDouble(current.split(",")[2]);
 		Vector off = new Vector(x, y, z);
-
-		BlockType type = BlockType.valueOf(s.split(";")[2]);
-		return new TreeBlock(data, off, type);
+		BlockType t = type == null ? BlockType.DEFAULT : type;
+		if (s.split(";").length == 3 && t == null) {
+			t = BlockType.valueOf(s.split(";")[2]);
+		}
+		return new TreeBlock(data, off, t);
 	}
 
 	@Override
@@ -232,7 +257,7 @@ public class TreeBlock implements ConfigurationSerializable {
 	public Map<String, Object> serialize() {
 		Map<String, Object> data = new HashMap<>();
 		data.put("offset", offset.toString());
-		data.put("data", this.data.getAsString());
+		data.put("data", this.data.getAsString(true));
 		data.put("type", this.type.toString());
 		return data;
 	}
