@@ -6,7 +6,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.msws.treecreation.api.TreeAPI;
-import xyz.msws.treecreation.commands.CaptureCommand;
 import xyz.msws.treecreation.trees.TreeBlock;
 import xyz.msws.treecreation.utils.MSG;
 
@@ -23,7 +22,8 @@ public class TreePlugin extends JavaPlugin implements TreeAPI {
 		if (!trees.exists())
 			trees.mkdirs();
 
-		getCommand("capture").setExecutor(new CaptureCommand(this));
+//		getCommand("capture").setExecutor(new CaptureCommand(this));
+//		getCommand("create").setExecutor(new CreateCommand(this));
 
 		ConfigurationSerialization.registerClass(TreeBlock.class);
 	}

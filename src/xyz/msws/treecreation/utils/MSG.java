@@ -42,7 +42,7 @@ public class MSG {
 	}
 
 	public boolean delayTell(Entity sender, long cd, String msg) {
-		Map<String, Long> msgs = messages.getOrDefault(messages, new HashMap<>());
+		Map<String, Long> msgs = messages.getOrDefault(sender.getUniqueId(), new HashMap<>());
 		String simp = simplify(msg);
 		long d = msgs.getOrDefault(simp, 0L);
 		if (System.currentTimeMillis() - d < cd)
@@ -54,6 +54,10 @@ public class MSG {
 
 	public boolean delayTell(Entity sender, String msg) {
 		return delayTell(sender, 5000, msg);
+	}
+
+	public boolean delayTell(Entity sender, String module, String msg) {
+		return delayTell(sender, 5000, module, msg);
 	}
 
 	public boolean delayTell(Entity sender, long cd, String module, String msg) {

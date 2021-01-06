@@ -7,25 +7,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import xyz.msws.treecreation.api.TreeAPI;
+import xyz.msws.treecreation.trees.AbstractTree;
 import xyz.msws.treecreation.trees.TreeBlock;
 import xyz.msws.treecreation.trees.TreeBlock.BlockType;
+import xyz.msws.treecreation.trees.TreeFactory;
+import xyz.msws.treecreation.trees.TreeYML;
 
 public class Capturer implements Listener {
 	private File target;
@@ -45,6 +46,9 @@ public class Capturer implements Listener {
 		Player player = event.getPlayer();
 		if (!(player.getUniqueId().equals(this.player)) || event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
 		Block block = event.getClickedBlock();
 		if (block == null || block.getType().isAir()) {
 			plugin.getMSG().delayTell(player, 5000, "Capturer", "No valid block targetted.");
@@ -52,7 +56,10 @@ public class Capturer implements Listener {
 		}
 
 		if (!target.getParentFile().exists()) {
-			plugin.getMSG().delayTell(player, 5000, "Capturer", plugin.getMSG().error + "Parent file does not exist.");
+			plugin.getMSG().delayTell(player, 5000, "Capturer",
+					plugin.getMSG().error + "Parent file does not exist, creating...");
+			target.getParentFile().mkdirs();
+			plugin.getMSG().tell(player, "Capturer", "Successfully created parent file.");
 			return;
 		}
 
@@ -63,10 +70,10 @@ public class Capturer implements Listener {
 
 		plugin.getMSG().tell(player, "Capturer", "Capturing tree, please wait...");
 
-		List<TreeBlock> blocks = new ArrayList<>();
-
 		long time = System.currentTimeMillis();
-		parseTree(block.getLocation(), null, blocks);
+
+		AbstractTree tree = new TreeFactory(block.getLocation()).build();
+		List<TreeBlock> blocks = tree.getBlocks();
 
 		int size = blocks.size();
 
@@ -74,17 +81,18 @@ public class Capturer implements Listener {
 				blocks.size() == 1 ? "" : "s", plugin.getMSG().secondary, System.currentTimeMillis() - time,
 				plugin.getMSG().primary);
 
-		YamlConfiguration file = YamlConfiguration.loadConfiguration(target);
+		TreeYML file = new TreeYML();
 		Map<BlockType, List<String>> bs = new HashMap<>();
-		for (TreeBlock tb : blocks) {
-			List<String> b = bs.getOrDefault(tb.getType(), new ArrayList<>());
-			b.add(tb.toString(false));
-			bs.put(tb.getType(), b);
+
+		for (BlockType type : BlockType.values()) {
+			List<String> ls = new ArrayList<>();
+			for (TreeBlock tb : tree.getPart(type)) {
+				ls.add(tb.toString(false));
+			}
+			bs.put(type, ls);
 		}
 
-		for (Entry<BlockType, List<String>> entry : bs.entrySet()) {
-			file.set("Blocks." + entry.getKey().toString(), entry.getValue());
-		}
+		file.setObject(tree);
 
 		try {
 			file.save(target);
@@ -116,31 +124,4 @@ public class Capturer implements Listener {
 		PlayerInteractEvent.getHandlerList().unregister(this);
 	}
 
-	private void parseTree(Location origin, Location current, List<TreeBlock> list) {
-		if (current == null)
-			current = origin;
-		if (list == null)
-			list = new ArrayList<>();
-		if (list.size() > 500)
-			return;
-		for (int x = -1; x <= 1; x++) {
-			for (int y = 0; y <= 1; y++) {
-				for (int z = -1; z <= 1; z++) {
-					Location c = current.clone().add(x, y, z);
-					TreeBlock block = new TreeBlock(c.getBlock().getBlockData(),
-							c.clone().toVector().subtract(origin.clone().toVector()));
-					Material m = block.getBlock().getMaterial();
-					if (list.contains(block) || m.isAir())
-						continue;
-					if (m == Material.GRASS || m == Material.GRASS_BLOCK || m == Material.DIRT || m == Material.STONE)
-						continue;
-					if (c.getBlock().isLiquid())
-						continue;
-
-					list.add(block);
-					parseTree(origin, c, list);
-				}
-			}
-		}
-	}
 }

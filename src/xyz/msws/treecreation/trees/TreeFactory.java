@@ -24,6 +24,7 @@ public class TreeFactory {
 
 	public TreeFactory(Location origin) {
 		this.rawTree = new NativeTree();
+		this.tree = new NativeTree();
 		List<TreeBlock> blocks = new ArrayList<>();
 		Map<BlockType, List<TreeBlock>> map = new HashMap<>();
 

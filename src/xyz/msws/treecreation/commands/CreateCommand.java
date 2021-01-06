@@ -7,10 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.block.Block;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -20,12 +18,13 @@ import xyz.msws.treecreation.generate.TreeGenerator;
 import xyz.msws.treecreation.trees.AbstractTree;
 import xyz.msws.treecreation.trees.NativeTree;
 
-public class CreateCommand implements CommandExecutor, TabCompleter {
+public class CreateCommand extends BukkitCommand {
 
 	private TreeAPI plugin;
 	private Map<String, AbstractTree> trees = new HashMap<>();
 
 	public CreateCommand(TreeAPI plugin) {
+		super("create");
 		this.plugin = plugin;
 
 		register(plugin.getTreeFile(), trees);
@@ -46,7 +45,7 @@ public class CreateCommand implements CommandExecutor, TabCompleter {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean execute(CommandSender sender, String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			plugin.getMSG().tell(sender, "Create", "You must be a player to generate a tree.");
 			return true;
@@ -74,7 +73,8 @@ public class CreateCommand implements CommandExecutor, TabCompleter {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+
 		List<String> result = new ArrayList<>();
 		String s = plugin.getMSG().simplify(String.join("", args));
 		for (String name : trees.keySet()) {
@@ -83,6 +83,7 @@ public class CreateCommand implements CommandExecutor, TabCompleter {
 			}
 		}
 		return result;
+
 	}
 
 }

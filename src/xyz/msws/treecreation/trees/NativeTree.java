@@ -13,6 +13,10 @@ import xyz.msws.treecreation.trees.TreeBlock.BlockType;
 @SerializableAs("NativeTree")
 public class NativeTree extends AbstractTree {
 
+	public static NativeTree deserialize(TreeYML yml) {
+		return (NativeTree) yml.getObjectAs().orElse(null);
+	}
+
 	public static NativeTree deserialize(Map<String, Object> data) {
 		NativeTree tree = new NativeTree();
 
