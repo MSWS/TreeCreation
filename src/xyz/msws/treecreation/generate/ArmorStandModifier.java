@@ -4,6 +4,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 
+import net.md_5.bungee.api.ChatColor;
 import xyz.msws.treecreation.api.TreeAPI;
 
 public class ArmorStandModifier extends GeneratorModifier {
@@ -20,10 +21,6 @@ public class ArmorStandModifier extends GeneratorModifier {
 
 	@Override
 	public void onPass() {
-		if (stand == null || !stand.isValid())
-			return;
-		String name = plugin.getMSG().progressBar(generator.getProgress(), 8);
-		stand.setCustomName(plugin.getMSG().color(plugin.getMSG().administrative + "Generating tree " + name));
 	}
 
 	@Override
@@ -43,6 +40,10 @@ public class ArmorStandModifier extends GeneratorModifier {
 
 	@Override
 	public void onPlace(Block block) {
+		if (stand == null || !stand.isValid())
+			return;
+		String name = plugin.getMSG().progressBar(generator.getProgress(), 8);
+		stand.setCustomName(plugin.getMSG().color(ChatColor.GOLD + "Generating tree " + name));
 	}
 
 }

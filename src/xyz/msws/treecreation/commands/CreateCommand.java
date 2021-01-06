@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
@@ -11,8 +12,8 @@ import org.bukkit.entity.Player;
 import xyz.msws.treecreation.api.TreeAPI;
 import xyz.msws.treecreation.generate.ArmorStandModifier;
 import xyz.msws.treecreation.generate.EffectModifier;
-import xyz.msws.treecreation.generate.LinearGenerator;
-import xyz.msws.treecreation.generate.SoundModifier;
+import xyz.msws.treecreation.generate.SnowModifier;
+import xyz.msws.treecreation.generate.TopDownGenerator;
 import xyz.msws.treecreation.generate.TreeGenerator;
 import xyz.msws.treecreation.trees.AbstractTree;
 
@@ -53,10 +54,17 @@ public class CreateCommand extends BukkitCommand {
 			return true;
 		}
 
-		TreeGenerator gen = new LinearGenerator(tree, target.getLocation());
+		for (BlockFace face : new BlockFace[] { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST }) {
+			if (target.getRelative(face).getType().isSolid()) {
+				target = target.getRelative(BlockFace.UP);
+				break;
+			}
+		}
+
+		TreeGenerator gen = new TopDownGenerator(tree, target.getLocation());
 		gen.addModifier(new ArmorStandModifier(plugin, gen));
-		gen.addModifier(new SoundModifier(plugin, gen));
 		gen.addModifier(new EffectModifier(plugin, gen));
+		gen.addModifier(new SnowModifier(plugin, gen));
 		gen.generate(plugin, 1);
 		return true;
 	}
@@ -71,7 +79,6 @@ public class CreateCommand extends BukkitCommand {
 			}
 		}
 		return result;
-
 	}
 
 }

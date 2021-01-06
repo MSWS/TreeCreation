@@ -20,5 +20,7 @@ public interface TreeAPI extends Plugin {
 
 	void refreshTreeTemplates();
 
+	void removeTemplate(String name);
+
 	MSG getMSG();
 }

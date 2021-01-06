@@ -9,10 +9,10 @@ import org.bukkit.block.Block;
 import xyz.msws.treecreation.trees.AbstractTree;
 import xyz.msws.treecreation.trees.TreeBlock;
 
-public class LinearGenerator extends TreeGenerator {
+public class BoringGenerator extends TreeGenerator {
 	private List<TreeBlock> toBuild;
 
-	public LinearGenerator(AbstractTree tree, Location origin) {
+	public BoringGenerator(AbstractTree tree, Location origin) {
 		super(tree, origin);
 		toBuild = tree.getBlocks();
 

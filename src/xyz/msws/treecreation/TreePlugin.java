@@ -80,4 +80,23 @@ public class TreePlugin extends JavaPlugin implements TreeAPI {
 	public Map<String, AbstractTree> getTreeTemplates() {
 		return templates;
 	}
+
+	@Override
+	public void removeTemplate(String name) {
+		templates.remove(name);
+		delete(name, getTreeFile());
+	}
+
+	private void delete(String name, File current) {
+		if (current.isDirectory()) {
+			for (File f : current.listFiles()) {
+				delete(name, f);
+			}
+			return;
+		}
+
+		if (getMSG().simplify(current.getName().substring(0, current.getName().length() - 4)).equals(name)) {
+			current.delete();
+		}
+	}
 }

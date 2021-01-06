@@ -24,6 +24,10 @@ public class TreeCommand implements CommandExecutor, TabCompleter {
 
 		commands.put("capture", new CaptureCommand(plugin));
 		commands.put("create", new CreateCommand(plugin));
+		commands.put("place", commands.get("create"));
+		commands.put("remove", new RemoveCommand(plugin));
+		commands.put("delete", commands.get("remove"));
+		commands.put("list", new ListCommand(plugin));
 	}
 
 	@Override

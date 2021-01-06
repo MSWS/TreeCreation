@@ -79,7 +79,8 @@ public class Capturer implements Listener {
 		long time = System.currentTimeMillis();
 
 		AbstractTree tree = new TreeFactory(block.getLocation()).build();
-		plugin.addTreeTemplate(target.getName().substring(0, target.getName().length() - 4), tree);
+		plugin.addTreeTemplate(plugin.getMSG().simplify(target.getName().substring(0, target.getName().length() - 4)),
+				tree);
 
 		List<TreeBlock> blocks = tree.getBlocks();
 

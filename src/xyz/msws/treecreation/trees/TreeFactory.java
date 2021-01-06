@@ -70,7 +70,7 @@ public class TreeFactory {
 			current = origin;
 		if (list == null)
 			list = new ArrayList<>();
-		if (list.size() > 500)
+		if (list.size() > 1000)
 			return;
 		for (int x = -1; x <= 1; x++) {
 			for (int y = -1; y <= 1; y++) {

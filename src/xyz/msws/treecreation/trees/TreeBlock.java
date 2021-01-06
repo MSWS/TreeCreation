@@ -208,7 +208,7 @@ public class TreeBlock implements ConfigurationSerializable {
 	 * @return
 	 */
 	public String toString(boolean includeType) {
-		return String.format(includeType ? "TreeBlock{%s;%s;%s}" : "TreeBlock{%s;%s}", this.data.getAsString(),
+		return String.format(includeType ? "TreeBlock{%s;%s;%s}" : "TreeBlock{%s;%s}", this.data.getAsString(true),
 				this.offset.toString(), this.type.toString());
 	}
 

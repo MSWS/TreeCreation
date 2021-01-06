@@ -42,5 +42,4 @@ public class CaptureCommand extends BukkitCommand {
 		return true;
 
 	}
-
 }

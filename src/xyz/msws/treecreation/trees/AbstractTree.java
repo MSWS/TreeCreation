@@ -3,10 +3,15 @@ package xyz.msws.treecreation.trees;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringJoiner;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.util.Vector;
 
@@ -45,5 +50,30 @@ public abstract class AbstractTree implements ConfigurationSerializable {
 			}
 		});
 		return bs.get(0).getTargetLocation(origin);
+	}
+
+	public String getDescription() {
+		Map<Material, Integer> blocks = new HashMap<>();
+		for (List<TreeBlock> bs : this.blocks.values()) {
+			for (TreeBlock b : bs) {
+				blocks.put(b.getBlock().getMaterial(), blocks.getOrDefault(b.getBlock().getMaterial(), 0) + 1);
+			}
+		}
+
+		List<Entry<Material, Integer>> sorted = new ArrayList<Map.Entry<Material, Integer>>();
+		sorted = new LinkedList<>(blocks.entrySet());
+
+		sorted.sort(new Comparator<Entry<Material, Integer>>() {
+			@Override
+			public int compare(Entry<Material, Integer> a, Entry<Material, Integer> b) {
+				return a.getValue() == b.getValue() ? 0 : a.getValue() > b.getValue() ? 1 : -1;
+			}
+		});
+
+		StringJoiner result = new StringJoiner("\n");
+		for (Entry<Material, Integer> entry : sorted) {
+			result.add(ChatColor.YELLOW + "" + entry.getValue() + "x " + ChatColor.GRAY + entry.getKey());
+		}
+		return result.toString();
 	}
 }
