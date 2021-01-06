@@ -17,6 +17,7 @@ import xyz.msws.treecreation.generate.RadialGenerator;
 import xyz.msws.treecreation.generate.SnowModifier;
 import xyz.msws.treecreation.generate.TreeGenerator;
 import xyz.msws.treecreation.trees.AbstractTree;
+import xyz.msws.treecreation.trees.TreeFactory;
 
 public class CreateCommand extends BukkitCommand {
 
@@ -61,6 +62,8 @@ public class CreateCommand extends BukkitCommand {
 				break;
 			}
 		}
+
+		tree = new TreeFactory(tree).modify(new xyz.msws.treecreation.trees.modifiers.ChristmasModifier()).build();
 
 		TreeGenerator gen = new RadialGenerator(tree, target.getLocation());
 		gen.addModifier(new ArmorStandModifier(plugin, gen));

@@ -53,6 +53,29 @@ public abstract class AbstractTree implements ConfigurationSerializable {
 		return bs.get(0).getTargetLocation(origin);
 	}
 
+	public TreeBlock getHighestTreeBlock() {
+		List<TreeBlock> bs = getBlocks();
+		if (bs.isEmpty())
+			return null;
+		bs.sort(new Comparator<TreeBlock>() {
+			@Override
+			public int compare(TreeBlock a, TreeBlock b) {
+
+				if (a.getOffset().getY() != b.getOffset().getY()) {
+					return a.getOffset().getY() > b.getOffset().getY() ? -1 : 1;
+				}
+
+				Vector av = a.getOffset().clone(), bv = b.getOffset().clone();
+				av.setY(0);
+				bv.setY(0);
+				double ad = av.lengthSquared();
+				double bd = bv.lengthSquared();
+				return ad == bd ? 0 : ad > bd ? 1 : -1;
+			}
+		});
+		return bs.get(0);
+	}
+
 	public Location getFurthestBlockLocation(Location origin) {
 		List<TreeBlock> bs = getBlocks();
 		if (bs.isEmpty())

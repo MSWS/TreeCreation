@@ -1,5 +1,6 @@
 package xyz.msws.treecreation.trees;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
@@ -17,6 +18,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.Vector;
 
 import xyz.msws.treecreation.exceptions.InvalidBlockException;
+import xyz.msws.treecreation.trees.modifiers.Modifier;
 
 /**
  * Responsible for encapsulating a tree's block type, offset, and data.
@@ -35,6 +37,7 @@ public class TreeBlock implements ConfigurationSerializable {
 
 	static {
 		decor.addAll(Tag.WOOL.getValues());
+		decor.addAll(Tag.BANNERS.getValues());
 		leaves.addAll(Tag.LEAVES.getValues());
 		trunks.addAll(Tag.LOGS.getValues());
 		trunks.addAll(Tag.PLANKS.getValues());
@@ -43,6 +46,8 @@ public class TreeBlock implements ConfigurationSerializable {
 			if (m.toString().contains("GLASS"))
 				decor.add(m);
 		}
+
+		decor.addAll(Arrays.asList(Material.SKELETON_SKULL, Material.SKELETON_WALL_SKULL));
 	}
 
 	/**
@@ -111,6 +116,24 @@ public class TreeBlock implements ConfigurationSerializable {
 		this.data = data;
 		this.offset = offset;
 		this.type = type;
+	}
+
+	/**
+	 * Provides support for <b>temporary</b> modificastion from {@link Modifier}
+	 * 
+	 * @param data
+	 */
+	public void modify(BlockData data) {
+		this.data = data;
+	}
+
+	/**
+	 * Provides support for <b>temporary</b> modificastion from {@link Modifier}
+	 * 
+	 * @param data
+	 */
+	public void modify(Material type) {
+		modify(Bukkit.createBlockData(type));
 	}
 
 	/**
