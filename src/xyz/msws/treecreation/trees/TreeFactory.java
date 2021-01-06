@@ -11,6 +11,12 @@ import org.bukkit.Material;
 import xyz.msws.treecreation.trees.TreeBlock.BlockType;
 import xyz.msws.treecreation.trees.modifiers.Modifier;
 
+/**
+ * Responsible for creating and modifying {@link AbstractTree}.
+ * 
+ * @author imodm
+ *
+ */
 public class TreeFactory {
 	private final AbstractTree rawTree;
 	private AbstractTree tree;
@@ -22,6 +28,11 @@ public class TreeFactory {
 		this.rawTree = tree;
 	}
 
+	/**
+	 * Automatically parse an existing tree
+	 * 
+	 * @param origin
+	 */
 	public TreeFactory(Location origin) {
 		this.rawTree = new NativeTree();
 		this.tree = new NativeTree();

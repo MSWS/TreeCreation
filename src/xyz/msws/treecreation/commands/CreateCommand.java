@@ -9,7 +9,10 @@ import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
 import xyz.msws.treecreation.api.TreeAPI;
+import xyz.msws.treecreation.generate.ArmorStandModifier;
+import xyz.msws.treecreation.generate.EffectModifier;
 import xyz.msws.treecreation.generate.LinearGenerator;
+import xyz.msws.treecreation.generate.SoundModifier;
 import xyz.msws.treecreation.generate.TreeGenerator;
 import xyz.msws.treecreation.trees.AbstractTree;
 
@@ -51,6 +54,9 @@ public class CreateCommand extends BukkitCommand {
 		}
 
 		TreeGenerator gen = new LinearGenerator(tree, target.getLocation());
+		gen.addModifier(new ArmorStandModifier(plugin, gen));
+		gen.addModifier(new SoundModifier(plugin, gen));
+		gen.addModifier(new EffectModifier(plugin, gen));
 		gen.generate(plugin, 1);
 		return true;
 	}

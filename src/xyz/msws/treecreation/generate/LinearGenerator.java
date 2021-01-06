@@ -4,12 +4,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 
 import xyz.msws.treecreation.trees.AbstractTree;
 import xyz.msws.treecreation.trees.TreeBlock;
 
 public class LinearGenerator extends TreeGenerator {
-
 	private List<TreeBlock> toBuild;
 
 	public LinearGenerator(AbstractTree tree, Location origin) {
@@ -30,9 +30,15 @@ public class LinearGenerator extends TreeGenerator {
 		if (toBuild == null || toBuild.isEmpty())
 			return 1.0f;
 
-		toBuild.get(0).place(origin);
+		Block b = toBuild.get(0).place(origin);
+		genModifiers.forEach(gen -> gen.onPlace(b));
 		toBuild.remove(0);
-		return (float) (tree.getBlocks().size() - toBuild.size()) / (float) tree.getBlocks().size();
+		return getProgress();
+	}
+
+	@Override
+	public float getProgress() {
+		return (float) ((float) tree.getBlocks().size() - toBuild.size()) / (float) tree.getBlocks().size();
 	}
 
 }

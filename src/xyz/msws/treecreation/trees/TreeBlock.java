@@ -9,6 +9,8 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -28,12 +30,20 @@ public class TreeBlock implements ConfigurationSerializable {
 	private BlockData data;
 	private Vector offset;
 
-	private static EnumSet<Material> leaves = EnumSet.of(Material.OAK_LEAVES, Material.ACACIA_LEAVES,
-			Material.BIRCH_LEAVES, Material.DARK_OAK_LEAVES, Material.JUNGLE_LEAVES, Material.SPRUCE_LEAVES);
-	private static EnumSet<Material> trunks = EnumSet.of(Material.ACACIA_LOG, Material.BIRCH_LOG, Material.DARK_OAK_LOG,
-			Material.JUNGLE_LOG, Material.OAK_LOG, Material.SPRUCE_LOG, Material.STRIPPED_ACACIA_LOG,
-			Material.STRIPPED_BIRCH_LOG, Material.STRIPPED_DARK_OAK_LOG, Material.STRIPPED_JUNGLE_LOG,
-			Material.STRIPPED_SPRUCE_LOG);
+	private final static EnumSet<Material> trunks = EnumSet.noneOf(Material.class),
+			leaves = EnumSet.noneOf(Material.class), decor = EnumSet.noneOf(Material.class);
+
+	static {
+		decor.addAll(Tag.WOOL.getValues());
+		leaves.addAll(Tag.LEAVES.getValues());
+		trunks.addAll(Tag.LOGS.getValues());
+		trunks.addAll(Tag.PLANKS.getValues());
+
+		for (Material m : Material.values()) {
+			if (m.toString().contains("GLASS"))
+				decor.add(m);
+		}
+	}
 
 	/**
 	 * Categorizes blocks based on where they are on the tree
@@ -176,9 +186,10 @@ public class TreeBlock implements ConfigurationSerializable {
 	 * 
 	 * @param origin
 	 */
-	public void place(Location origin) {
+	public Block place(Location origin) {
 		Location target = getTargetLocation(origin);
 		target.getBlock().setBlockData(data);
+		return target.getBlock();
 	}
 
 	/**

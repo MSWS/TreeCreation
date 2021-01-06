@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.CommandBlock;
@@ -108,5 +109,21 @@ public class MSG {
 
 	public String color(String s) {
 		return ChatColor.translateAlternateColorCodes('&', s);
+	}
+
+	public String progressBar(float progress, int length) {
+		return progressBar("\u25a0", progress, length);
+	}
+
+	public String progressBar(String c, float progress, int length) {
+		String s = StringUtils.repeat(c, length);
+		int index = (int) ((float) progress * (float) length);
+		s = ChatColor.GREEN + s.substring(0, index) + ChatColor.RED + s.substring(index);
+		return s;
+	}
+
+	public String progressbar(String a, String b, float progress, int length) {
+		int index = (int) ((float) progress * (float) length);
+		return StringUtils.repeat(a, index) + StringUtils.repeat(b, length - index);
 	}
 }
