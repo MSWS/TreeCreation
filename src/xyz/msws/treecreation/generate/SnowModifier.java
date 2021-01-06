@@ -14,6 +14,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Snow;
 
 import xyz.msws.treecreation.api.TreeAPI;
+import xyz.msws.treecreation.trees.TreeBlock;
 
 public class SnowModifier extends GeneratorModifier {
 
@@ -46,7 +47,8 @@ public class SnowModifier extends GeneratorModifier {
 	}
 
 	@Override
-	public void onPlace(Block block) {
+	public void onPlace(TreeBlock tb) {
+		Block block = tb.getTargetLocation(generator.origin).getBlock();
 		if (!block.getRelative(BlockFace.UP).getType().isAir())
 			return;
 		if (!block.getType().isSolid())

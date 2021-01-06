@@ -3,6 +3,7 @@ package xyz.msws.treecreation.generate;
 import org.bukkit.block.Block;
 
 import xyz.msws.treecreation.api.TreeAPI;
+import xyz.msws.treecreation.trees.TreeBlock;
 
 public class SoundModifier extends GeneratorModifier {
 
@@ -23,7 +24,9 @@ public class SoundModifier extends GeneratorModifier {
 	}
 
 	@Override
-	public void onPlace(Block block) {
+	public void onPlace(TreeBlock tb) {
+		Block block = tb.getTargetLocation(generator.origin).getBlock();
+
 		block.getLocation().getWorld().playSound(block.getLocation(),
 				block.getBlockData().getSoundGroup().getPlaceSound(), 1.0f, 2f - generator.getProgress() * 2.0f);
 	}

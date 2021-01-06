@@ -1,8 +1,7 @@
 package xyz.msws.treecreation.generate;
 
-import org.bukkit.block.Block;
-
 import xyz.msws.treecreation.api.TreeAPI;
+import xyz.msws.treecreation.trees.TreeBlock;
 
 public abstract class GeneratorModifier {
 	protected TreeGenerator generator;
@@ -13,11 +12,13 @@ public abstract class GeneratorModifier {
 		this.generator = generator;
 	}
 
-	public abstract void onStart();
+	public void onStart() {
+	}
 
-	public abstract void onPass();
+	public void onPass() {
+	}
 
-	public void onPlace(Block block) {
+	public void onPlace(TreeBlock block) {
 	}
 
 	public abstract void onComplete();

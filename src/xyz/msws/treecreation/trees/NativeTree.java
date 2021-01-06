@@ -34,12 +34,12 @@ public class NativeTree extends AbstractTree {
 				try {
 					TreeBlock block = TreeBlock.fromString(c.toString(), type);
 					blocks.add(block);
+					tree.addBlock(block);
 				} catch (InvalidBlockException e) {
 					e.printStackTrace();
 					continue;
 				}
 			}
-			tree.blocks.put(type, blocks);
 		}
 
 		return tree;
@@ -49,7 +49,7 @@ public class NativeTree extends AbstractTree {
 	public Map<String, Object> serialize() {
 		Map<String, Object> blocks = new HashMap<>();
 
-		for (Entry<BlockType, List<TreeBlock>> entry : this.blocks.entrySet()) {
+		for (Entry<BlockType, List<TreeBlock>> entry : this.getBlocksMap().entrySet()) {
 			List<String> data = new ArrayList<>();
 			for (TreeBlock tb : entry.getValue()) {
 				data.add(tb.toString(false));

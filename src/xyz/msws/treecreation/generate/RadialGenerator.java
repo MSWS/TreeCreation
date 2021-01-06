@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
 import xyz.msws.treecreation.trees.AbstractTree;
@@ -38,8 +37,8 @@ public class RadialGenerator extends TreeGenerator {
 		if (toBuild == null || toBuild.isEmpty())
 			return 1.0f;
 
-		Block b = toBuild.get(0).place(origin);
-		genModifiers.forEach(gen -> gen.onPlace(b));
+		toBuild.get(0).place(origin);
+		genModifiers.forEach(gen -> gen.onPlace(toBuild.get(0)));
 		toBuild.remove(0);
 		return getProgress();
 	}

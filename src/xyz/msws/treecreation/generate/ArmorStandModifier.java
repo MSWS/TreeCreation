@@ -1,11 +1,11 @@
 package xyz.msws.treecreation.generate;
 
-import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 
 import net.md_5.bungee.api.ChatColor;
 import xyz.msws.treecreation.api.TreeAPI;
+import xyz.msws.treecreation.trees.TreeBlock;
 
 public class ArmorStandModifier extends GeneratorModifier {
 
@@ -39,7 +39,7 @@ public class ArmorStandModifier extends GeneratorModifier {
 	}
 
 	@Override
-	public void onPlace(Block block) {
+	public void onPlace(TreeBlock block) {
 		if (stand == null || !stand.isValid())
 			return;
 		String name = plugin.getMSG().progressBar(generator.getProgress(), 8);
