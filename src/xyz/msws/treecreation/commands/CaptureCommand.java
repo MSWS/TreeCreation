@@ -20,19 +20,24 @@ public class CaptureCommand extends BukkitCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
-
 		if (!(sender instanceof Player)) {
 			plugin.getMSG().tell(sender, "Capturer", "You must be a player to capture trees");
 			return true;
 		}
 
+		if (args.length == 0) {
+			plugin.getMSG().tell(sender, "Capturer", "Please specify a name for the tree.");
+			return true;
+		}
+
+		String name = String.join(" ", args);
+
 		Player player = (Player) sender;
 		plugin.getMSG().tell(sender, "Capturer", plugin.getMSG().emphasis + "Right-Click " + plugin.getMSG().primary
 				+ "on the bottom of the tree to capture it.");
+		plugin.getMSG().tell(sender, "Capturer", "(Left-Click to cancel)");
 
-		File file = new File(plugin.getTreeFile().getPath() + File.separator + "captured",
-				player.getUniqueId() + "" + System.currentTimeMillis() + ".yml");
-
+		File file = new File(plugin.getTreeFile().getPath() + File.separator + "captured", name + ".yml");
 		new Capturer(plugin, file, player);
 		return true;
 

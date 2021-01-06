@@ -40,6 +40,7 @@ public abstract class TreeGenerator implements Listener {
 					endTime = System.currentTimeMillis();
 					genModifiers.forEach(GeneratorModifier::onComplete);
 					LeavesDecayEvent.getHandlerList().unregister(TreeGenerator.this);
+					BlockPhysicsEvent.getHandlerList().unregister(TreeGenerator.this);
 					this.cancel();
 					return;
 				}

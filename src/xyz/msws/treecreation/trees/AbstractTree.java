@@ -27,6 +27,8 @@ public abstract class AbstractTree implements ConfigurationSerializable {
 
 	public Location getHighestBlockLocation(Location origin) {
 		List<TreeBlock> bs = getBlocks();
+		if (bs.isEmpty())
+			return origin;
 		bs.sort(new Comparator<TreeBlock>() {
 			@Override
 			public int compare(TreeBlock a, TreeBlock b) {

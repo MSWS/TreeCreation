@@ -44,7 +44,14 @@ public class Capturer implements Listener {
 	@EventHandler
 	public void onClick(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!(player.getUniqueId().equals(this.player)) || event.getAction() != Action.RIGHT_CLICK_BLOCK)
+		if (!(player.getUniqueId().equals(this.player)))
+			return;
+		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+			plugin.getMSG().tell(player, "Capturer", "Cancelled capturing of tree.");
+			PlayerInteractEvent.getHandlerList().unregister(this);
+		}
+
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
