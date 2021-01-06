@@ -62,7 +62,7 @@ public class TreeFactory {
 		if (list.size() > 500)
 			return;
 		for (int x = -1; x <= 1; x++) {
-			for (int y = 0; y <= 1; y++) {
+			for (int y = -1; y <= 1; y++) {
 				for (int z = -1; z <= 1; z++) {
 					Location c = current.clone().add(x, y, z);
 					TreeBlock block = new TreeBlock(c.getBlock().getBlockData(),

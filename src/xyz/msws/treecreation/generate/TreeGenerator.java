@@ -3,14 +3,18 @@ package xyz.msws.treecreation.generate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import xyz.msws.treecreation.api.TreeAPI;
 import xyz.msws.treecreation.trees.AbstractTree;
 
-@SuppressWarnings("unused")
-public abstract class TreeGenerator {
+public abstract class TreeGenerator implements Listener {
 	protected AbstractTree tree;
 	protected Location origin;
 
@@ -32,12 +36,22 @@ public abstract class TreeGenerator {
 			public void run() {
 				if (pass() >= 1f) {
 					endTime = System.currentTimeMillis();
+					LeavesDecayEvent.getHandlerList().unregister(TreeGenerator.this);
 					this.cancel();
 					return;
 				}
 				genModifiers.forEach(m -> m.modify(TreeGenerator.this));
 			}
 		}.runTaskTimer(plugin, 0, period);
+
+		Bukkit.getPluginManager().registerEvents(this, plugin);
+	}
+
+	@EventHandler
+	public void onBlockDecay(LeavesDecayEvent event) {
+		Block block = event.getBlock();
+		if (tree.getBlocks().parallelStream().anyMatch(b -> b.getTargetLocation(origin).equals(block.getLocation())))
+			event.setCancelled(true);
 	}
 
 	public long getStartTime() {

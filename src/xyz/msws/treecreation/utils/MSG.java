@@ -5,8 +5,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
+import org.bukkit.block.CommandBlock;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 /**
  * Responsible for sending and delaying messages
@@ -15,6 +19,30 @@ import org.bukkit.entity.Entity;
  *
  */
 public class MSG {
+
+	private Map<CommandSender, UUID> uuids = new HashMap<>();
+
+	@SuppressWarnings("deprecation")
+	private UUID getUUID(CommandSender sender) {
+		if (uuids.containsKey(sender))
+			return uuids.get(sender);
+
+		UUID uuid = UUID.randomUUID();
+
+		if (sender instanceof Entity) {
+			uuid = ((Entity) sender).getUniqueId();
+		} else if (sender instanceof CommandBlock) {
+			NamespacedKey key = new NamespacedKey("tree", "uuid");
+			CommandBlock block = (CommandBlock) sender;
+			PersistentDataContainer pdc = block.getPersistentDataContainer();
+			if (!pdc.has(key, PersistentDataType.STRING)) {
+				pdc.set(key, PersistentDataType.STRING, (uuid = UUID.randomUUID()).toString());
+			}
+		}
+		uuids.put(sender, uuid);
+
+		return uuid;
+	}
 
 	public String prefix = "&9", primary = "&7", secondary = "&8", emphasis = "&e", administrative = "&4",
 			module = "&9", error = "&c";
@@ -41,27 +69,36 @@ public class MSG {
 		sender.sendMessage(msg);
 	}
 
-	public boolean delayTell(Entity sender, long cd, String msg) {
-		Map<String, Long> msgs = messages.getOrDefault(sender.getUniqueId(), new HashMap<>());
+	public boolean delayTell(CommandSender sender, long cd, String msg, Object... format) {
+		Map<String, Long> msgs = messages.getOrDefault(getUUID(sender), new HashMap<>());
 		String simp = simplify(msg);
 		long d = msgs.getOrDefault(simp, 0L);
 		if (System.currentTimeMillis() - d < cd)
 			return false;
-		tell(sender, msg);
+		tell(sender, msg, format);
 		msgs.put(simp, System.currentTimeMillis());
+		messages.put(getUUID(sender), msgs);
 		return true;
 	}
 
-	public boolean delayTell(Entity sender, String msg) {
-		return delayTell(sender, 5000, msg);
+	public boolean delayTell(CommandSender sender, String msg, Object... format) {
+		return delayTell(sender, 5000, msg, format);
 	}
 
-	public boolean delayTell(Entity sender, String module, String msg) {
+	public boolean delayTell(CommandSender sender, String module, String msg) {
 		return delayTell(sender, 5000, module, msg);
 	}
 
-	public boolean delayTell(Entity sender, long cd, String module, String msg) {
+	public boolean delayTell(CommandSender sender, String module, String msg, Object... format) {
+		return delayTell(sender, 5000, module, msg, format);
+	}
+
+	public boolean delayTell(CommandSender sender, long cd, String module, String msg) {
 		return delayTell(sender, cd, this.module + module + secondary + " > " + primary + msg);
+	}
+
+	public boolean delayTell(CommandSender sender, long cd, String module, String msg, Object... format) {
+		return delayTell(sender, cd, this.module + module + secondary + " > " + primary + msg, format);
 	}
 
 	public String simplify(String s) {

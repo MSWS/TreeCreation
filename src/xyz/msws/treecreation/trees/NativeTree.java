@@ -1,6 +1,7 @@
 package xyz.msws.treecreation.trees;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,24 +9,37 @@ import java.util.Map.Entry;
 
 import org.bukkit.configuration.serialization.SerializableAs;
 
+import xyz.msws.treecreation.exceptions.InvalidBlockException;
 import xyz.msws.treecreation.trees.TreeBlock.BlockType;
 
 @SerializableAs("NativeTree")
 public class NativeTree extends AbstractTree {
 
 	public static NativeTree deserialize(TreeYML yml) {
-		return (NativeTree) yml.getObjectAs().orElse(null);
+		return (NativeTree) yml.getObject();
 	}
 
 	public static NativeTree deserialize(Map<String, Object> data) {
 		NativeTree tree = new NativeTree();
 
-		for (Entry<String, Object> d : data.entrySet()) {
-			if (!(d.getValue() instanceof TreeBlock))
+		for (BlockType type : BlockType.values()) {
+			Object d = data.get("Blocks." + type.toString());
+			if (d == null || !(d instanceof Collection<?>))
 				continue;
-			TreeBlock block = (TreeBlock) d.getValue();
-			List<TreeBlock> bs = tree.blocks.getOrDefault(block.getType(), new ArrayList<>());
-			tree.blocks.put(block.getType(), bs);
+			Collection<?> col = (Collection<?>) d;
+			List<TreeBlock> blocks = new ArrayList<>();
+			for (Object c : col) {
+				if (!(c instanceof String))
+					continue;
+				try {
+					TreeBlock block = TreeBlock.fromString(c.toString(), type);
+					blocks.add(block);
+				} catch (InvalidBlockException e) {
+					e.printStackTrace();
+					continue;
+				}
+			}
+			tree.blocks.put(type, blocks);
 		}
 
 		return tree;
@@ -36,7 +50,11 @@ public class NativeTree extends AbstractTree {
 		Map<String, Object> blocks = new HashMap<>();
 
 		for (Entry<BlockType, List<TreeBlock>> entry : this.blocks.entrySet()) {
-			blocks.put("Blocks." + entry.getKey().toString(), entry.getValue());
+			List<String> data = new ArrayList<>();
+			for (TreeBlock tb : entry.getValue()) {
+				data.add(tb.toString(false));
+			}
+			blocks.put("Blocks." + entry.getKey().toString(), data);
 		}
 
 		return blocks;

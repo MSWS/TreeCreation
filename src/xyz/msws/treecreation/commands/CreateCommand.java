@@ -1,47 +1,25 @@
 package xyz.msws.treecreation.commands;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import xyz.msws.treecreation.api.TreeAPI;
 import xyz.msws.treecreation.generate.LinearGenerator;
 import xyz.msws.treecreation.generate.TreeGenerator;
 import xyz.msws.treecreation.trees.AbstractTree;
-import xyz.msws.treecreation.trees.NativeTree;
 
 public class CreateCommand extends BukkitCommand {
 
 	private TreeAPI plugin;
-	private Map<String, AbstractTree> trees = new HashMap<>();
 
 	public CreateCommand(TreeAPI plugin) {
 		super("create");
 		this.plugin = plugin;
-
-		register(plugin.getTreeFile(), trees);
-	}
-
-	private void register(File file, Map<String, AbstractTree> trees) {
-		if (!file.isDirectory()) {
-			if (!file.getName().endsWith(".yml"))
-				return;
-			YamlConfiguration tree = YamlConfiguration.loadConfiguration(file);
-			NativeTree t = NativeTree.deserialize(tree.getValues(true));
-			trees.put(plugin.getMSG().simplify(file.getName().substring(0, file.getName().length() - 3)), t);
-			return;
-		}
-		for (File f : file.listFiles()) {
-			register(f, trees);
-		}
 	}
 
 	@Override
@@ -57,29 +35,33 @@ public class CreateCommand extends BukkitCommand {
 		}
 
 		String s = plugin.getMSG().simplify(String.join("", args));
-		if (!trees.containsKey(s)) {
+		if (!plugin.getTreeTemplates().containsKey(s)) {
 			plugin.getMSG().tell(sender, "Create", "Unknown tree file.");
 			return true;
 		}
 
-		AbstractTree tree = trees.get(s);
+		AbstractTree tree = plugin.getTreeTemplates().get(s);
 
 		Player player = (Player) sender;
 		Block target = player.getTargetBlockExact(10);
 
+		if (target == null || target.getType().isAir()) {
+			plugin.getMSG().tell(sender, "Create", "Please look at the target block");
+			return true;
+		}
+
 		TreeGenerator gen = new LinearGenerator(tree, target.getLocation());
-		gen.generate(plugin, 5);
+		gen.generate(plugin, 1);
 		return true;
 	}
 
 	@Override
 	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
-
 		List<String> result = new ArrayList<>();
 		String s = plugin.getMSG().simplify(String.join("", args));
-		for (String name : trees.keySet()) {
+		for (String name : plugin.getTreeTemplates().keySet()) {
 			if (plugin.getMSG().simplify(name).startsWith(s)) {
-				result.add(plugin.getMSG().simplify(s));
+				result.add(plugin.getMSG().simplify(name));
 			}
 		}
 		return result;

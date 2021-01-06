@@ -1,5 +1,6 @@
 package xyz.msws.treecreation.generate;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -14,6 +15,14 @@ public class LinearGenerator extends TreeGenerator {
 	public LinearGenerator(AbstractTree tree, Location origin) {
 		super(tree, origin);
 		toBuild = tree.getBlocks();
+
+		toBuild.sort(new Comparator<TreeBlock>() {
+			@Override
+			public int compare(TreeBlock o1, TreeBlock o2) {
+				double a = o1.getOffset().lengthSquared(), b = o2.getOffset().lengthSquared();
+				return (a == b) ? 0 : a > b ? 1 : -1;
+			}
+		});
 	}
 
 	@Override
@@ -23,7 +32,7 @@ public class LinearGenerator extends TreeGenerator {
 
 		toBuild.get(0).place(origin);
 		toBuild.remove(0);
-		return (float) toBuild.size() / (float) tree.getBlocks().size();
+		return (float) (tree.getBlocks().size() - toBuild.size()) / (float) tree.getBlocks().size();
 	}
 
 }

@@ -30,7 +30,7 @@ public class CaptureCommand extends BukkitCommand {
 		plugin.getMSG().tell(sender, "Capturer", plugin.getMSG().emphasis + "Right-Click " + plugin.getMSG().primary
 				+ "on the bottom of the tree to capture it.");
 
-		File file = new File(plugin.getDataFolder().getPath() + File.separator + "captured",
+		File file = new File(plugin.getTreeFile().getPath() + File.separator + "captured",
 				player.getUniqueId() + "" + System.currentTimeMillis() + ".yml");
 
 		new Capturer(plugin, file, player);

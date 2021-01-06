@@ -1,9 +1,9 @@
 package xyz.msws.treecreation.commands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,7 +15,7 @@ import xyz.msws.treecreation.api.TreeAPI;
 
 public class TreeCommand implements CommandExecutor, TabCompleter {
 
-	private Map<String, BukkitCommand> commands;
+	private Map<String, BukkitCommand> commands = new HashMap<>();
 
 	private TreeAPI plugin;
 
@@ -24,10 +24,6 @@ public class TreeCommand implements CommandExecutor, TabCompleter {
 
 		commands.put("capture", new CaptureCommand(plugin));
 		commands.put("create", new CreateCommand(plugin));
-
-		for (Entry<String, BukkitCommand> entry : commands.entrySet()) {
-			plugin.getCommand(entry.getKey()).setExecutor(this);
-		}
 	}
 
 	@Override
@@ -56,9 +52,9 @@ public class TreeCommand implements CommandExecutor, TabCompleter {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		List<String> result = new ArrayList<>();
-		if (args.length == 1) {
+		if (args.length <= 1) {
 			for (String s : commands.keySet()) {
-				if (args[0].toLowerCase().startsWith(s.toLowerCase())) {
+				if (s.toLowerCase().startsWith(args[0].toLowerCase())) {
 					result.add(s);
 				}
 			}
@@ -66,13 +62,15 @@ public class TreeCommand implements CommandExecutor, TabCompleter {
 		}
 
 		BukkitCommand cmd = commands.get(args[0].toLowerCase());
+		if (cmd == null)
+			return result;
 
 		String[] newArgs = new String[args.length - 1];
 		for (int i = 1; i < args.length; i++) {
 			newArgs[i - 1] = args[i];
 		}
 
-		return cmd.tabComplete(sender, label, newArgs);
+		return cmd.tabComplete(sender, args[0], newArgs);
 	}
 
 }

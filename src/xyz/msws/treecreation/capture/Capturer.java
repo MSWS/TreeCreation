@@ -56,15 +56,14 @@ public class Capturer implements Listener {
 		}
 
 		if (!target.getParentFile().exists()) {
-			plugin.getMSG().delayTell(player, 5000, "Capturer",
+			plugin.getMSG().delayTell(player, "Capturer",
 					plugin.getMSG().error + "Parent file does not exist, creating...");
 			target.getParentFile().mkdirs();
 			plugin.getMSG().tell(player, "Capturer", "Successfully created parent file.");
-			return;
 		}
 
 		if (target.exists()) {
-			plugin.getMSG().delayTell(player, 5000, "Capturer", plugin.getMSG().error + "Target file already exists.");
+			plugin.getMSG().tell(player, "Capturer", plugin.getMSG().error + "Target file already exists.");
 			return;
 		}
 
@@ -73,6 +72,8 @@ public class Capturer implements Listener {
 		long time = System.currentTimeMillis();
 
 		AbstractTree tree = new TreeFactory(block.getLocation()).build();
+		plugin.addTreeTemplate(target.getName().substring(0, target.getName().length() - 4), tree);
+
 		List<TreeBlock> blocks = tree.getBlocks();
 
 		int size = blocks.size();
