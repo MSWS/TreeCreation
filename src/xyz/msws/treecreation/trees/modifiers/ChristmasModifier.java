@@ -8,9 +8,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
-import xyz.msws.treecreation.trees.AbstractTree;
-import xyz.msws.treecreation.trees.TreeBlock;
-import xyz.msws.treecreation.trees.TreeBlock.BlockType;
+import xyz.msws.treecreation.data.AbstractTree;
+import xyz.msws.treecreation.data.TreeBlock;
+import xyz.msws.treecreation.data.TreeBlock.BlockType;
 
 public class ChristmasModifier implements Modifier {
 

@@ -5,8 +5,9 @@ import java.util.List;
 
 import org.bukkit.Location;
 
-import xyz.msws.treecreation.trees.AbstractTree;
-import xyz.msws.treecreation.trees.TreeBlock;
+import xyz.msws.treecreation.data.AbstractTree;
+import xyz.msws.treecreation.data.TreeBlock;
+import xyz.msws.treecreation.generate.modifiers.GeneratorModifier;
 
 public class BoringGenerator extends TreeGenerator {
 	private List<TreeBlock> toBuild;
@@ -38,5 +39,12 @@ public class BoringGenerator extends TreeGenerator {
 	@Override
 	public float getProgress() {
 		return (float) ((float) tree.getBlocks().size() - toBuild.size()) / (float) tree.getBlocks().size();
+	}
+
+	@Override
+	public void onStopped() {
+		genModifiers.forEach(GeneratorModifier::onStopped);
+		toBuild.forEach(b -> b.place(origin));
+		toBuild = null;
 	}
 }

@@ -1,4 +1,4 @@
-package xyz.msws.treecreation.trees;
+package xyz.msws.treecreation.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import xyz.msws.treecreation.trees.TreeBlock.BlockType;
+import xyz.msws.treecreation.data.TreeBlock.BlockType;
 import xyz.msws.treecreation.trees.modifiers.Modifier;
 
 /**

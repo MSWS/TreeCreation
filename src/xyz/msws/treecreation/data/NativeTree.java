@@ -1,4 +1,4 @@
-package xyz.msws.treecreation.trees;
+package xyz.msws.treecreation.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,8 +9,8 @@ import java.util.Map.Entry;
 
 import org.bukkit.configuration.serialization.SerializableAs;
 
+import xyz.msws.treecreation.data.TreeBlock.BlockType;
 import xyz.msws.treecreation.exceptions.InvalidBlockException;
-import xyz.msws.treecreation.trees.TreeBlock.BlockType;
 
 @SerializableAs("NativeTree")
 public class NativeTree extends AbstractTree {

@@ -12,7 +12,7 @@ import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import xyz.msws.treecreation.api.TreeAPI;
-import xyz.msws.treecreation.trees.AbstractTree;
+import xyz.msws.treecreation.data.AbstractTree;
 
 public class ListCommand extends BukkitCommand {
 

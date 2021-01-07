@@ -6,7 +6,7 @@ import java.util.Map;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 
-import xyz.msws.treecreation.trees.AbstractTree;
+import xyz.msws.treecreation.data.AbstractTree;
 import xyz.msws.treecreation.utils.MSG;
 
 public interface TreeAPI extends Plugin {

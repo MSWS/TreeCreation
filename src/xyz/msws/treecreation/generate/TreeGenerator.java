@@ -13,7 +13,10 @@ import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import xyz.msws.treecreation.api.TreeAPI;
-import xyz.msws.treecreation.trees.AbstractTree;
+import xyz.msws.treecreation.data.AbstractTree;
+import xyz.msws.treecreation.events.GeneratorFinishEvent;
+import xyz.msws.treecreation.events.GeneratorStartEvent;
+import xyz.msws.treecreation.generate.modifiers.GeneratorModifier;
 
 public abstract class TreeGenerator implements Listener {
 	protected AbstractTree tree;
@@ -31,6 +34,11 @@ public abstract class TreeGenerator implements Listener {
 	}
 
 	public void generate(TreeAPI plugin, long period) {
+		GeneratorStartEvent start = new GeneratorStartEvent(this);
+		Bukkit.getPluginManager().callEvent(start);
+		if (start.isCancelled())
+			return;
+
 		this.startTime = System.currentTimeMillis();
 		genModifiers.forEach(GeneratorModifier::onStart);
 		new BukkitRunnable() {
@@ -39,6 +47,10 @@ public abstract class TreeGenerator implements Listener {
 				if (pass() >= 1f) {
 					endTime = System.currentTimeMillis();
 					genModifiers.forEach(GeneratorModifier::onComplete);
+
+					GeneratorFinishEvent stop = new GeneratorFinishEvent(TreeGenerator.this);
+					Bukkit.getPluginManager().callEvent(stop);
+
 					LeavesDecayEvent.getHandlerList().unregister(TreeGenerator.this);
 					BlockPhysicsEvent.getHandlerList().unregister(TreeGenerator.this);
 					this.cancel();
@@ -50,6 +62,8 @@ public abstract class TreeGenerator implements Listener {
 
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
+
+	public abstract void onStopped();
 
 	public void addModifier(GeneratorModifier modifier) {
 		this.genModifiers.add(modifier);
@@ -89,8 +103,32 @@ public abstract class TreeGenerator implements Listener {
 		return generated;
 	}
 
+	public AbstractTree getTree() {
+		return tree;
+	}
+
+	public Location getOrigin() {
+		return origin.clone();
+	}
+
 	public abstract float pass();
 
 	public abstract float getProgress();
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (obj == this)
+			return true;
+		if (!(obj instanceof TreeGenerator))
+			return false;
+		TreeGenerator gen = (TreeGenerator) obj;
+		if (!gen.getTree().equals(this.getTree()))
+			return false;
+		if (!gen.getOrigin().equals(this.getOrigin()))
+			return false;
+		return true;
+	}
 
 }

@@ -1,4 +1,4 @@
-package xyz.msws.treecreation.generate;
+package xyz.msws.treecreation.generate.modifiers;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -6,7 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 
 import xyz.msws.treecreation.api.TreeAPI;
-import xyz.msws.treecreation.trees.TreeBlock;
+import xyz.msws.treecreation.data.TreeBlock;
+import xyz.msws.treecreation.generate.TreeGenerator;
 
 public class ChristmasModifier extends GeneratorModifier {
 
@@ -17,9 +18,10 @@ public class ChristmasModifier extends GeneratorModifier {
 	public ChristmasModifier(TreeAPI plugin, TreeGenerator generator) {
 		super(plugin, generator);
 		this.rnd = ThreadLocalRandom.current();
-		this.height = generator.tree.getHighestBlockLocation(generator.origin).getBlockY()
-				- generator.origin.getBlockY();
-		this.range = generator.tree.getFurthestBlockLocation(generator.origin).distance(generator.origin) * (2.0 / 3.0);
+		this.height = generator.getTree().getHighestBlockLocation(generator.getOrigin()).getBlockY()
+				- generator.getOrigin().getBlockY();
+		this.range = generator.getTree().getFurthestBlockLocation(generator.getOrigin()).distance(generator.getOrigin())
+				* (2.0 / 3.0);
 	}
 
 	@Override
@@ -28,7 +30,7 @@ public class ChristmasModifier extends GeneratorModifier {
 
 	@Override
 	public void onPass() {
-		Location origin = generator.origin.clone();
+		Location origin = generator.getOrigin().clone();
 		double off = (System.currentTimeMillis() - generator.getStartTime()) / (500 - (generator.getProgress() * 400));
 
 		for (double t = 0; t <= height; t += .1) {
@@ -39,7 +41,7 @@ public class ChristmasModifier extends GeneratorModifier {
 
 	@Override
 	public void onPlace(TreeBlock block) {
-		Location l = block.getTargetLocation(generator.origin).getBlock().getLocation().clone();
+		Location l = block.getTargetLocation(generator.getOrigin()).getBlock().getLocation().clone();
 		l.add(.5, .5, .5);
 		l.getWorld().spawnParticle(Particle.TOTEM, l, rnd.nextInt(2, 6), .5, .5, .5);
 

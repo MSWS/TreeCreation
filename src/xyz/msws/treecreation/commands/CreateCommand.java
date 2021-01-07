@@ -10,14 +10,14 @@ import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
 import xyz.msws.treecreation.api.TreeAPI;
-import xyz.msws.treecreation.generate.ArmorStandModifier;
-import xyz.msws.treecreation.generate.ChristmasModifier;
-import xyz.msws.treecreation.generate.EffectModifier;
+import xyz.msws.treecreation.data.AbstractTree;
+import xyz.msws.treecreation.data.TreeFactory;
 import xyz.msws.treecreation.generate.RadialGenerator;
-import xyz.msws.treecreation.generate.SnowModifier;
 import xyz.msws.treecreation.generate.TreeGenerator;
-import xyz.msws.treecreation.trees.AbstractTree;
-import xyz.msws.treecreation.trees.TreeFactory;
+import xyz.msws.treecreation.generate.modifiers.ArmorStandModifier;
+import xyz.msws.treecreation.generate.modifiers.ChristmasModifier;
+import xyz.msws.treecreation.generate.modifiers.EffectModifier;
+import xyz.msws.treecreation.generate.modifiers.SnowModifier;
 
 public class CreateCommand extends BukkitCommand {
 

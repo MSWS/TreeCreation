@@ -1,4 +1,4 @@
-package xyz.msws.treecreation.generate;
+package xyz.msws.treecreation.generate.modifiers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Snow;
 
 import xyz.msws.treecreation.api.TreeAPI;
-import xyz.msws.treecreation.trees.TreeBlock;
+import xyz.msws.treecreation.data.TreeBlock;
+import xyz.msws.treecreation.generate.TreeGenerator;
 
 public class SnowModifier extends GeneratorModifier {
 
@@ -38,7 +39,7 @@ public class SnowModifier extends GeneratorModifier {
 				continue;
 			l.getWorld().spawnParticle(rnd.nextBoolean() ? Particle.SNOW_SHOVEL : Particle.SNOWBALL, l, rnd.nextInt(5),
 					.5, 1, .5);
-			l.getWorld().playSound(l, Sound.BLOCK_SNOW_BREAK, (float) l.distanceSquared(generator.origin) / 2.0f, .5f);
+			l.getWorld().playSound(l, Sound.BLOCK_SNOW_BREAK, (float) l.distanceSquared(generator.getOrigin()) / 2.0f, .5f);
 		}
 	}
 
@@ -48,7 +49,7 @@ public class SnowModifier extends GeneratorModifier {
 
 	@Override
 	public void onPlace(TreeBlock tb) {
-		Block block = tb.getTargetLocation(generator.origin).getBlock();
+		Block block = tb.getTargetLocation(generator.getOrigin()).getBlock();
 		if (!block.getRelative(BlockFace.UP).getType().isAir())
 			return;
 		if (!block.getType().isSolid())

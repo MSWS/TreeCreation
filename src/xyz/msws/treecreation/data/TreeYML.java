@@ -1,4 +1,4 @@
-package xyz.msws.treecreation.trees;
+package xyz.msws.treecreation.data;
 
 import java.io.File;
 import java.io.IOException;

@@ -22,11 +22,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import xyz.msws.treecreation.api.TreeAPI;
-import xyz.msws.treecreation.trees.AbstractTree;
-import xyz.msws.treecreation.trees.TreeBlock;
-import xyz.msws.treecreation.trees.TreeBlock.BlockType;
-import xyz.msws.treecreation.trees.TreeFactory;
-import xyz.msws.treecreation.trees.TreeYML;
+import xyz.msws.treecreation.data.AbstractTree;
+import xyz.msws.treecreation.data.TreeBlock;
+import xyz.msws.treecreation.data.TreeFactory;
+import xyz.msws.treecreation.data.TreeYML;
+import xyz.msws.treecreation.data.TreeBlock.BlockType;
 
 public class Capturer implements Listener {
 	private File target;

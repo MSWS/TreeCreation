@@ -1,7 +1,8 @@
-package xyz.msws.treecreation.generate;
+package xyz.msws.treecreation.generate.modifiers;
 
 import xyz.msws.treecreation.api.TreeAPI;
-import xyz.msws.treecreation.trees.TreeBlock;
+import xyz.msws.treecreation.data.TreeBlock;
+import xyz.msws.treecreation.generate.TreeGenerator;
 
 public abstract class GeneratorModifier {
 	protected TreeGenerator generator;
@@ -19,6 +20,9 @@ public abstract class GeneratorModifier {
 	}
 
 	public void onPlace(TreeBlock block) {
+	}
+	
+	public void onStopped() {
 	}
 
 	public abstract void onComplete();

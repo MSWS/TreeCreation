@@ -9,10 +9,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.msws.treecreation.api.TreeAPI;
 import xyz.msws.treecreation.commands.TreeCommand;
-import xyz.msws.treecreation.trees.AbstractTree;
-import xyz.msws.treecreation.trees.NativeTree;
-import xyz.msws.treecreation.trees.TreeBlock;
-import xyz.msws.treecreation.trees.TreeYML;
+import xyz.msws.treecreation.data.AbstractTree;
+import xyz.msws.treecreation.data.NativeTree;
+import xyz.msws.treecreation.data.TreeBlock;
+import xyz.msws.treecreation.data.TreeYML;
+import xyz.msws.treecreation.generate.GeneratorMonitor;
 import xyz.msws.treecreation.utils.MSG;
 
 public class TreePlugin extends JavaPlugin implements TreeAPI {
@@ -20,6 +21,7 @@ public class TreePlugin extends JavaPlugin implements TreeAPI {
 	private File trees;
 	private MSG msg;
 	private Map<String, AbstractTree> templates;
+	private GeneratorMonitor monitor;
 
 	@Override
 	public void onLoad() {
@@ -36,9 +38,16 @@ public class TreePlugin extends JavaPlugin implements TreeAPI {
 		if (!trees.exists())
 			trees.mkdirs();
 
+		monitor = new GeneratorMonitor(this);
+
 		register(this.getTreeFile(), templates);
 
 		getCommand("tree").setExecutor(new TreeCommand(this));
+	}
+
+	@Override
+	public void onDisable() {
+		monitor.onDisable();
 	}
 
 	public void refreshTreeTemplates() {
