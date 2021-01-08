@@ -5,11 +5,13 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -63,11 +65,29 @@ public class MSG {
 	}
 
 	public void tell(CommandSender sender, String module, String msg, Object... args) {
-		tell(sender, String.format(this.module + module + secondary + " > " + primary + msg, args));
+		tell(sender, this.module + module + secondary + " > " + primary + msg, args);
 	}
 
 	public void tellraw(CommandSender sender, String msg) {
 		sender.sendMessage(msg);
+	}
+
+	public void broadcast(String msg) {
+		for (Player p : Bukkit.getOnlinePlayers())
+			tell(p, msg);
+		tell(Bukkit.getConsoleSender(), msg);
+	}
+
+	public void broadcast(String module, String msg) {
+		broadcast(this.module + module + secondary + " > " + primary + msg);
+	}
+
+	public void broadcast(String msg, Object... args) {
+		broadcast(String.format(msg, args));
+	}
+
+	public void broadcast(String module, String msg, Object... args) {
+		broadcast(this.module + module + secondary + " > " + primary + msg, args);
 	}
 
 	public boolean delayTell(CommandSender sender, long cd, String msg, Object... format) {

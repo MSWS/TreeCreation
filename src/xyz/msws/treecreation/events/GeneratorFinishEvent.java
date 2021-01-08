@@ -30,4 +30,8 @@ public class GeneratorFinishEvent extends TreeEvent {
 		return generator;
 	}
 
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
+
 }

@@ -42,4 +42,8 @@ public class GeneratorStartEvent extends TreeEvent implements Cancellable {
 		this.cancel = cancel;
 	}
 
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
+
 }

@@ -54,26 +54,8 @@ public abstract class AbstractTree implements ConfigurationSerializable {
 	 * @return The highest and centermost block if it exists, origin otherwise
 	 */
 	public Location getHighestBlockLocation(Location origin) {
-		List<TreeBlock> bs = getBlocks();
-		if (bs.isEmpty())
-			return origin;
-		bs.sort(new Comparator<TreeBlock>() {
-			@Override
-			public int compare(TreeBlock a, TreeBlock b) {
-
-				if (a.getOffset().getY() != b.getOffset().getY()) {
-					return a.getOffset().getY() > b.getOffset().getY() ? -1 : 1;
-				}
-
-				Vector av = a.getOffset().clone(), bv = b.getOffset().clone();
-				av.setY(0);
-				bv.setY(0);
-				double ad = av.lengthSquared();
-				double bd = bv.lengthSquared();
-				return ad == bd ? 0 : ad > bd ? 1 : -1;
-			}
-		});
-		return bs.get(0).getTargetLocation(origin);
+		TreeBlock tb = getHighestTreeBlock();
+		return tb == null ? origin : tb.getTargetLocation(origin);
 	}
 
 	/**
@@ -105,15 +87,28 @@ public abstract class AbstractTree implements ConfigurationSerializable {
 	}
 
 	/**
-	 * Gets the furthest block from the tree's origin
+	 * Gets the <b>horizontally</b> furthest block from the tree's origin
 	 * 
 	 * @param origin The origin of the tree
 	 * @return The futhest block if it exists, the origin otherwise.
 	 */
-	public Location getFurthestBlockLocation(Location origin) {
+	public Location getFurthestLocation(Location origin) {
+		TreeBlock tb = getFurthestTreeBlock();
+		return tb == null ? origin : tb.getTargetLocation(origin);
+	}
+
+	/**
+	 * Gets the <b>horizontally</b> furthest {@link TreeBlock} from the tree's
+	 * origin, if more than on block is the same horizontal distance then a random
+	 * one is returned
+	 * 
+	 * @param origin The origin of the tree
+	 * @return The futhest block if it exists, the origin otherwise.
+	 */
+	public TreeBlock getFurthestTreeBlock() {
 		List<TreeBlock> bs = getBlocks();
 		if (bs.isEmpty())
-			return origin;
+			return null;
 		bs.sort(new Comparator<TreeBlock>() {
 			@Override
 			public int compare(TreeBlock a, TreeBlock b) {
@@ -125,7 +120,27 @@ public abstract class AbstractTree implements ConfigurationSerializable {
 				return ad == bd ? 0 : ad > bd ? -1 : 1;
 			}
 		});
-		return bs.get(0).getTargetLocation(origin);
+		return bs.get(0);
+	}
+
+	/**
+	 * Gets the tree's radius squared
+	 * 
+	 * @return
+	 */
+	public double getRadiusSquared() {
+		Vector off = getFurthestTreeBlock().getOffset().clone();
+		off.setY(0);
+		return off.lengthSquared();
+	}
+
+	/**
+	 * Gets the tree's radius
+	 * 
+	 * @return
+	 */
+	public double getRadius() {
+		return Math.sqrt(getRadiusSquared());
 	}
 
 	/**
