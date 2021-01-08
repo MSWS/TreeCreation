@@ -42,10 +42,8 @@ public class SnowModifier extends GeneratorModifier {
 				if (b.distanceSquared(generator.getOrigin()) > Math.pow(range, 2))
 					continue;
 
-				int i = 0;
-				while (b.getBlock().getType().isAir() && i < 3) {
+				for (int i = 0; i < 3 && b.getBlock().getType().isAir(); i++) {
 					b.subtract(0, 1, 0);
-					i++;
 				}
 				b.add(0, 1, 0);
 				radial.add(b);
