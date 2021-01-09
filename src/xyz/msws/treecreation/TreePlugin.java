@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.msws.treecreation.api.TreeAPI;
 import xyz.msws.treecreation.commands.TreeCommand;
 import xyz.msws.treecreation.data.AbstractTree;
+import xyz.msws.treecreation.data.CompressedTree;
 import xyz.msws.treecreation.data.NativeTree;
 import xyz.msws.treecreation.data.TreeBlock;
 import xyz.msws.treecreation.data.TreeYML;
@@ -27,6 +28,7 @@ public class TreePlugin extends JavaPlugin implements TreeAPI {
 	public void onLoad() {
 		ConfigurationSerialization.registerClass(TreeBlock.class);
 		ConfigurationSerialization.registerClass(NativeTree.class);
+		ConfigurationSerialization.registerClass(CompressedTree.class);
 	}
 
 	@Override
@@ -74,7 +76,7 @@ public class TreePlugin extends JavaPlugin implements TreeAPI {
 			if (!file.getName().endsWith(".yml"))
 				return;
 			TreeYML tree = TreeYML.loadConfiguration(file);
-			NativeTree t = NativeTree.deserialize(tree);
+			AbstractTree t = (AbstractTree) tree.getObject();
 			if (t == null)
 				return;
 			trees.put(getMSG().simplify(file.getName().substring(0, file.getName().length() - 4)), t);

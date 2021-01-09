@@ -34,8 +34,8 @@ public class TreeFactory {
 	 * @param origin
 	 */
 	public TreeFactory(Location origin) {
-		this.rawTree = new NativeTree();
-		this.tree = new NativeTree();
+		this.rawTree = new CompressedTree();
+		this.tree = new CompressedTree();
 		List<TreeBlock> blocks = new ArrayList<>();
 		Map<BlockType, List<TreeBlock>> map = new HashMap<>();
 
