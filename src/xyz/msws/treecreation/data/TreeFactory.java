@@ -77,7 +77,7 @@ public class TreeFactory {
 				for (int z = -1; z <= 1; z++) {
 					Location c = current.clone().add(x, y, z);
 					TreeBlock block = new TreeBlock(c.getBlock().getBlockData(),
-							c.clone().toVector().subtract(origin.clone().toVector()));
+							c.clone().toVector().subtract(origin.clone().toVector()).toBlockVector());
 					Material m = block.getBlock().getMaterial();
 					if (list.contains(block) || m.isAir())
 						continue;

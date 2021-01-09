@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import xyz.msws.treecreation.api.TreeAPI;
 import xyz.msws.treecreation.data.AbstractTree;
 import xyz.msws.treecreation.data.TreeFactory;
-import xyz.msws.treecreation.generate.RadialGenerator;
+import xyz.msws.treecreation.generate.CircleGenerator;
 import xyz.msws.treecreation.generate.TreeGenerator;
 import xyz.msws.treecreation.generate.modifiers.ArmorStandModifier;
 import xyz.msws.treecreation.generate.modifiers.ChristmasModifier;
@@ -65,7 +65,7 @@ public class CreateCommand extends BukkitCommand {
 
 		tree = new TreeFactory(tree).modify(new xyz.msws.treecreation.trees.modifiers.ChristmasModifier()).build();
 
-		TreeGenerator gen = new RadialGenerator(tree, target.getLocation());
+		TreeGenerator gen = new CircleGenerator(tree, target.getLocation());
 		gen.addModifier(new ArmorStandModifier(plugin, gen));
 		gen.addModifier(new EffectModifier(plugin, gen));
 		gen.addModifier(new SnowModifier(plugin, gen));

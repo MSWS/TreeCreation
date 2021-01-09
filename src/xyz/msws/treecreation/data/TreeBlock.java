@@ -15,7 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.util.Vector;
+import org.bukkit.util.BlockVector;
 
 import xyz.msws.treecreation.exceptions.InvalidBlockException;
 import xyz.msws.treecreation.trees.modifiers.Modifier;
@@ -30,7 +30,8 @@ import xyz.msws.treecreation.trees.modifiers.Modifier;
 public class TreeBlock implements ConfigurationSerializable {
 	private BlockType type = BlockType.DEFAULT;
 	private BlockData data;
-	private Vector offset;
+	private BlockVector offset;
+	private double length, hLength;
 
 	private final static EnumSet<Material> trunks = EnumSet.noneOf(Material.class),
 			leaves = EnumSet.noneOf(Material.class), decor = EnumSet.noneOf(Material.class);
@@ -75,7 +76,7 @@ public class TreeBlock implements ConfigurationSerializable {
 	 * 
 	 * @return
 	 */
-	public Vector getOffset() {
+	public BlockVector getOffset() {
 		return offset;
 	}
 
@@ -86,7 +87,7 @@ public class TreeBlock implements ConfigurationSerializable {
 	 * @param mat    Block material to use, use tertiary constructor to specify data
 	 * @param offset Offset location relative to origin
 	 */
-	public TreeBlock(Material mat, Vector offset) {
+	public TreeBlock(Material mat, BlockVector offset) {
 		this(Bukkit.createBlockData(mat), offset);
 	}
 
@@ -97,11 +98,8 @@ public class TreeBlock implements ConfigurationSerializable {
 	 * @param mat    Block data to use
 	 * @param offset Offset location relative to origin
 	 */
-	public TreeBlock(BlockData data, Vector offset) {
+	public TreeBlock(BlockData data, BlockVector offset) {
 		this(data, offset, guessType(data.getMaterial()));
-		this.data = data;
-		this.offset = offset;
-		this.type = guessType(data.getMaterial());
 	}
 
 	/**
@@ -112,10 +110,14 @@ public class TreeBlock implements ConfigurationSerializable {
 	 * @param offset Offset location relative to origin
 	 * @param type   Block type
 	 */
-	public TreeBlock(BlockData data, Vector offset, BlockType type) {
+	public TreeBlock(BlockData data, BlockVector offset, BlockType type) {
 		this.data = data;
 		this.offset = offset;
 		this.type = type;
+		this.length = offset.length();
+		BlockVector tv = offset.clone();
+		tv.setY(0);
+		this.hLength = tv.length();
 	}
 
 	/**
@@ -161,10 +163,10 @@ public class TreeBlock implements ConfigurationSerializable {
 
 		if (current == null || current.split(",").length != 3)
 			throw new InvalidBlockException("Block offset is invalid");
-		double x = Double.parseDouble(current.split(",")[0]), y = Double.parseDouble(current.split(",")[1]),
-				z = Double.parseDouble(current.split(",")[2]);
+		int x = Integer.parseInt(current.split(",")[0]), y = Integer.parseInt(current.split(",")[1]),
+				z = Integer.parseInt(current.split(",")[2]);
 
-		Vector offset = new Vector(x, y, z);
+		BlockVector offset = new BlockVector(x, y, z);
 
 		current = (String) data.get("data");
 		BlockData blockData = Bukkit.createBlockData(current);
@@ -224,6 +226,26 @@ public class TreeBlock implements ConfigurationSerializable {
 	}
 
 	/**
+	 * Returns a cached length that was created at initialization, as such it may be
+	 * outdated if the vector is modified
+	 * 
+	 * @return
+	 */
+	public double getLength() {
+		return length;
+	}
+
+	/**
+	 * Returns a cached horizontal length that was created at initialization, as
+	 * such it may be outdated if the vector is modified
+	 * 
+	 * @return
+	 */
+	public double getHorizontalLength() {
+		return hLength;
+	}
+
+	/**
 	 * Returns a string representation of the block, depending on the data structure
 	 * it may be desirable to ommit the {@link BlockType}
 	 * 
@@ -267,9 +289,9 @@ public class TreeBlock implements ConfigurationSerializable {
 		String current = s.split(";")[1];
 		if (current == null || current.split(",").length != 3)
 			throw new InvalidBlockException("Block offset is invalid");
-		double x = Double.parseDouble(current.split(",")[0]), y = Double.parseDouble(current.split(",")[1]),
-				z = Double.parseDouble(current.split(",")[2]);
-		Vector off = new Vector(x, y, z);
+		int x = Integer.parseInt(current.split(",")[0]), y = Integer.parseInt(current.split(",")[1]),
+				z = Integer.parseInt(current.split(",")[2]);
+		BlockVector off = new BlockVector(x, y, z);
 		BlockType t = type == null ? BlockType.DEFAULT : type;
 		if (s.split(";").length == 3 && t == null) {
 			t = BlockType.valueOf(s.split(";")[2]);

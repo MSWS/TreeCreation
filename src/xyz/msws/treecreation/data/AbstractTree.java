@@ -80,7 +80,7 @@ public abstract class AbstractTree implements ConfigurationSerializable {
 				bv.setY(0);
 				double ad = av.lengthSquared();
 				double bd = bv.lengthSquared();
-				return ad == bd ? 0 : ad > bd ? 1 : -1;
+				return ad == bd ? 0 : ad > bd ? -1 : 1;
 			}
 		});
 		return bs.get(0);

@@ -9,6 +9,7 @@ import java.util.StringJoiner;
 import org.bukkit.Bukkit;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
 
 import xyz.msws.treecreation.data.TreeBlock.BlockType;
@@ -71,10 +72,9 @@ public class CompressedTree extends AbstractTree {
 					String[] args = s.split(",");
 					if (args.length != 3)
 						continue;
-					double x = Double.parseDouble(args[0]);
-					double y = Double.parseDouble(args[1]);
-					double z = Double.parseDouble(args[2]);
-					tree.addBlock(new TreeBlock(blockData, new Vector(x, y, z), type));
+					int x = Integer.parseInt(args[0]), y = Integer.parseInt(args[1]), z = Integer.parseInt(args[2]);
+
+					tree.addBlock(new TreeBlock(blockData, new BlockVector(x, y, z), type));
 				}
 			}
 		}

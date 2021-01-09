@@ -16,7 +16,7 @@ public class EffectModifier extends GeneratorModifier {
 	@Override
 	public void onPlace(TreeBlock block) {
 		Location l = block.getTargetLocation(generator.getOrigin());
-		l.getWorld().spawnParticle(Particle.BLOCK_DUST, l, 4, 0, 0, 0, l.getBlock().getBlockData());
+		l.getWorld().spawnParticle(Particle.BLOCK_DUST, l, 4, 0, 0, 0, block.getBlock());
 	}
 
 	@Override

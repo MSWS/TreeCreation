@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import xyz.msws.treecreation.api.TreeAPI;
 import xyz.msws.treecreation.data.AbstractTree;
+import xyz.msws.treecreation.data.TreeBlock;
 import xyz.msws.treecreation.events.GeneratorFinishEvent;
 import xyz.msws.treecreation.events.GeneratorStartEvent;
 import xyz.msws.treecreation.generate.modifiers.GeneratorModifier;
@@ -61,6 +62,11 @@ public abstract class TreeGenerator implements Listener {
 		}.runTaskTimer(plugin, 0, period);
 
 		Bukkit.getPluginManager().registerEvents(this, plugin);
+	}
+
+	protected void placeBlock(TreeBlock tb) {
+		genModifiers.forEach(gen -> gen.onPlace(tb));
+		tb.place(origin);
 	}
 
 	public abstract void onStopped();

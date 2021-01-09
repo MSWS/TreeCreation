@@ -34,8 +34,6 @@ public class TopDownGenerator extends TreeGenerator {
 		if (toBuild == null || toBuild.isEmpty())
 			return 1.0f;
 
-		toBuild.get(0).place(origin);
-		genModifiers.forEach(gen -> gen.onPlace(toBuild.get(0)));
 		toBuild.remove(0);
 		return getProgress();
 	}

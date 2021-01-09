@@ -28,12 +28,13 @@ public class ArmorStandModifier extends GeneratorModifier {
 
 	@Override
 	public void onStart() {
-		stand = (ArmorStand) generator.getOrigin().getWorld()
-				.spawnEntity(generator.getTree().getHighestBlockLocation(generator.getOrigin()), EntityType.ARMOR_STAND);
+		stand = (ArmorStand) generator.getOrigin().getWorld().spawnEntity(
+				generator.getTree().getHighestBlockLocation(generator.getOrigin()), EntityType.ARMOR_STAND);
 		NamespacedKey temp = new NamespacedKey(plugin, "temp");
 		stand.getPersistentDataContainer().set(temp, PersistentDataType.INTEGER, 1);
 		stand.setGravity(false);
 		stand.setVisible(false);
+		stand.setCustomName(ChatColor.GOLD + "Generating tree...");
 		stand.setCustomNameVisible(true);
 	}
 
@@ -53,8 +54,10 @@ public class ArmorStandModifier extends GeneratorModifier {
 	public void onPlace(TreeBlock block) {
 		if (stand == null || !stand.isValid())
 			return;
-		String name = plugin.getMSG().progressBar(generator.getProgress(), 8);
-		stand.setCustomName(plugin.getMSG().color(ChatColor.GOLD + "Generating tree " + name));
+		String bar = plugin.getMSG().progressBar(generator.getProgress(), 10);
+		String title = "&6Generating tree %s &f(&7%.2f%%&f)";
+
+		stand.setCustomName(plugin.getMSG().color(String.format(title, bar, generator.getProgress() * 100)));
 	}
 
 }
