@@ -3,21 +3,12 @@ package xyz.msws.treecreation.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
 import xyz.msws.treecreation.api.TreeAPI;
-import xyz.msws.treecreation.data.AbstractTree;
-import xyz.msws.treecreation.data.TreeFactory;
-import xyz.msws.treecreation.generate.CircleGenerator;
-import xyz.msws.treecreation.generate.TreeGenerator;
-import xyz.msws.treecreation.generate.modifiers.ArmorStandModifier;
-import xyz.msws.treecreation.generate.modifiers.ChristmasModifier;
-import xyz.msws.treecreation.generate.modifiers.EffectModifier;
-import xyz.msws.treecreation.generate.modifiers.SnowModifier;
+import xyz.msws.treecreation.gui.TreeSelectionGUI;
 
 public class CreateCommand extends BukkitCommand {
 
@@ -35,42 +26,45 @@ public class CreateCommand extends BukkitCommand {
 			return true;
 		}
 
-		if (args.length == 0) {
-			plugin.getMSG().tell(sender, "Create", "Please specify a tree file name.");
-			return true;
-		}
+		new TreeSelectionGUI(plugin, ((Player) sender).getUniqueId()).openInventory();
 
-		String s = plugin.getMSG().simplify(String.join("", args));
-		if (!plugin.getTreeTemplates().containsKey(s)) {
-			plugin.getMSG().tell(sender, "Create", "Unknown tree file.");
-			return true;
-		}
-
-		AbstractTree tree = plugin.getTreeTemplates().get(s);
-
-		Player player = (Player) sender;
-		Block target = player.getTargetBlockExact(10);
-
-		if (target == null || target.getType().isAir()) {
-			plugin.getMSG().tell(sender, "Create", "Please look at the target block");
-			return true;
-		}
-
-		for (BlockFace face : new BlockFace[] { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST }) {
-			if (target.getRelative(face).getType().isSolid()) {
-				target = target.getRelative(BlockFace.UP);
-				break;
-			}
-		}
-
-		tree = new TreeFactory(tree).modify(new xyz.msws.treecreation.trees.modifiers.ChristmasModifier()).build();
-
-		TreeGenerator gen = new CircleGenerator(tree, target.getLocation());
-		gen.addModifier(new ArmorStandModifier(plugin, gen));
-		gen.addModifier(new EffectModifier(plugin, gen));
-		gen.addModifier(new SnowModifier(plugin, gen));
-		gen.addModifier(new ChristmasModifier(plugin, gen));
-		gen.generate(plugin, 1);
+//		if (args.length == 0) {
+//			plugin.getMSG().tell(sender, "Create", "Please specify a tree file name.");
+//			return true;
+//		}
+//
+//		String s = plugin.getMSG().simplify(String.join("", args));
+//		if (!plugin.getTreeTemplates().containsKey(s)) {
+//			plugin.getMSG().tell(sender, "Create", "Unknown tree file.");
+//			return true;
+//		}
+//
+//		AbstractTree tree = plugin.getTreeTemplates().get(s);
+//
+//		Player player = (Player) sender;
+//		Block target = player.getTargetBlockExact(10);
+//
+//		if (target == null || target.getType().isAir()) {
+//			plugin.getMSG().tell(sender, "Create", "Please look at the target block");
+//			return true;
+//		}
+//
+//		for (BlockFace face : new BlockFace[] { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST }) {
+//			if (target.getRelative(face).getType().isSolid()) {
+//				target = target.getRelative(BlockFace.UP);
+//				break;
+//			}
+//		}
+//
+//		tree = new TreeFactory(tree).modify(new xyz.msws.treecreation.trees.modifiers.ChristmasModifier()).build();
+//
+//		TreeGenerator gen = new RVGenerator(plugin, tree, target.getLocation());
+////		TreeGenerator gen = new TopDownGenerator(tree, target.getLocation());
+//		gen.addModifier(new ArmorStandModifier(plugin, gen));
+//		gen.addModifier(new EffectModifier(plugin, gen));
+//		gen.addModifier(new SnowModifier(plugin, gen));
+//		gen.addModifier(new ChristmasModifier(plugin, gen));
+//		gen.generate(plugin, 1);
 		return true;
 	}
 

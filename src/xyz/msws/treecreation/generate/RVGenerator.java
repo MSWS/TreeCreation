@@ -12,20 +12,20 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.util.BlockVector;
-import org.bukkit.util.Vector;
 
+import xyz.msws.treecreation.api.TreeAPI;
 import xyz.msws.treecreation.data.AbstractTree;
 import xyz.msws.treecreation.data.TreeBlock;
 import xyz.msws.treecreation.generate.modifiers.GeneratorModifier;
 
-public class CircleGenerator extends TreeGenerator {
+public class RVGenerator extends TreeGenerator {
 	private List<TreeBlock> toBuild = new ArrayList<>();
-	private Map<Integer, Map<TreeBlock, Vector>> targets = new HashMap<>();
+	private Map<Integer, Map<TreeBlock, BlockVector>> targets = new HashMap<>();
 	private double time;
 	private int height;
 
-	public CircleGenerator(AbstractTree tree, Location origin) {
-		super(tree, origin);
+	public RVGenerator(TreeAPI plugin, AbstractTree tree, Location origin) {
+		super(plugin, tree, origin);
 		toBuild = tree.getBlocks();
 
 		toBuild.sort(new Comparator<TreeBlock>() {
@@ -43,19 +43,19 @@ public class CircleGenerator extends TreeGenerator {
 	public float pass() {
 		if (toBuild == null || toBuild.isEmpty())
 			return 1.0f;
-		time = (System.currentTimeMillis() - getStartTime()) / 200.0;
+		time = (System.currentTimeMillis() - getStartTime()) / 400.0;
 
 		for (int y = height; y >= 0; y--) {
 			int fy = y;
 
-			Vector off = new Vector(Math.sin(time + y / 5.0), 0, Math.cos(time + y / 5.0));
+			BlockVector off = new BlockVector(Math.sin(time + y / 5.0), 0, Math.cos(time + y / 5.0));
 
 			if (!targets.containsKey(y)) {
 				TreeBlock next = toBuild.stream().filter(b -> b.getOffset().getBlockY() == fy).findFirst().orElse(null);
 				if (next == null) {
 					targets.put(y, null);
 				} else {
-					Map<TreeBlock, Vector> query = new HashMap<>();
+					Map<TreeBlock, BlockVector> query = new HashMap<>();
 					toBuild.remove(next);
 
 					off.normalize().multiply(next.getHorizontalLength());
@@ -66,33 +66,33 @@ public class CircleGenerator extends TreeGenerator {
 				}
 			}
 
-			Map<TreeBlock, Vector> vert = targets.get(y);
+			Map<TreeBlock, BlockVector> vert = targets.get(y);
 			if (vert == null)
 				continue;
 
-			Iterator<Entry<TreeBlock, Vector>> it = vert.entrySet().iterator();
-			Map<TreeBlock, Vector> nextSet = new HashMap<>();
+			Iterator<Entry<TreeBlock, BlockVector>> it = vert.entrySet().iterator();
+			Map<TreeBlock, BlockVector> nextSet = new HashMap<>();
 			while (it.hasNext()) {
 				off = new BlockVector(Math.sin(time + y / 5.0), 0, Math.cos(time + y / 5.0));
-				Entry<TreeBlock, Vector> entry = it.next();
-				Vector target = entry.getKey().getOffset(), current = entry.getValue();
-				if (target.getBlockX() == current.getBlockX() && target.getBlockZ() == current.getBlockZ()) {
-					it.remove();
-					placeBlock(entry.getKey());
-					continue;
-				}
+				Entry<TreeBlock, BlockVector> entry = it.next();
+				BlockVector target = entry.getKey().getOffset(), current = entry.getValue();
 
 				off.normalize().multiply(entry.getKey().getHorizontalLength());
 				off.setY(y);
-				off.add(new Vector(.5, 0, .5));
+				off.add(new BlockVector(.5, 0, .5));
 
 				Block b = origin.clone().add(entry.getValue()).getBlock();
 				if (b.getBlockData().equals(entry.getKey().getBlock()))
 					b.setType(Material.AIR);
 
+				if (target.distanceSquared(current) <= 4) {
+					it.remove();
+					placeBlock(entry.getKey());
+					continue;
+				}
+
 				b = origin.clone().add(off).getBlock();
-				if (b.getType().isAir() || !b.getType().isSolid())
-					b.setBlockData(entry.getKey().getBlock());
+				b.setBlockData(entry.getKey().getBlock());
 				nextSet.put(entry.getKey(), off);
 			}
 
@@ -116,5 +116,10 @@ public class CircleGenerator extends TreeGenerator {
 		genModifiers.forEach(GeneratorModifier::onStopped);
 		toBuild.forEach(b -> b.place(origin));
 		toBuild = null;
+	}
+
+	@Override
+	public String getName() {
+		return "RV Generator";
 	}
 }

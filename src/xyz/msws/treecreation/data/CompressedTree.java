@@ -38,6 +38,7 @@ public class CompressedTree extends AbstractTree {
 			blocks.put(type.toString(), blockStrings);
 		}
 		data.put("Blocks", blocks);
+		data.put("Name", this.getName());
 		return data;
 	}
 
@@ -78,6 +79,8 @@ public class CompressedTree extends AbstractTree {
 				}
 			}
 		}
+		if (data.containsKey("Name"))
+			tree.setName(data.get("Name").toString());
 		return tree;
 	}
 

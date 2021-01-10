@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Location;
 
+import xyz.msws.treecreation.api.TreeAPI;
 import xyz.msws.treecreation.data.AbstractTree;
 import xyz.msws.treecreation.data.TreeBlock;
 import xyz.msws.treecreation.generate.modifiers.GeneratorModifier;
@@ -12,8 +13,8 @@ import xyz.msws.treecreation.generate.modifiers.GeneratorModifier;
 public class TopDownGenerator extends TreeGenerator {
 	private List<TreeBlock> toBuild;
 
-	public TopDownGenerator(AbstractTree tree, Location origin) {
-		super(tree, origin);
+	public TopDownGenerator(TreeAPI plugin, AbstractTree tree, Location origin) {
+		super(plugin, tree, origin);
 		toBuild = tree.getBlocks();
 
 		toBuild.sort(new Comparator<TreeBlock>() {
@@ -34,6 +35,7 @@ public class TopDownGenerator extends TreeGenerator {
 		if (toBuild == null || toBuild.isEmpty())
 			return 1.0f;
 
+		placeBlock(toBuild.get(0));
 		toBuild.remove(0);
 		return getProgress();
 	}
@@ -48,6 +50,11 @@ public class TopDownGenerator extends TreeGenerator {
 		genModifiers.forEach(GeneratorModifier::onStopped);
 		toBuild.forEach(b -> b.place(origin));
 		toBuild = null;
+	}
+
+	@Override
+	public String getName() {
+		return "Top Down Generator";
 	}
 
 }

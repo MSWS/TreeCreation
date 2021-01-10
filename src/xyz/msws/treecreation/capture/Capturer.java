@@ -79,14 +79,15 @@ public class Capturer implements Listener {
 		long time = System.currentTimeMillis();
 
 		AbstractTree tree = new TreeFactory(block.getLocation()).build();
-		plugin.addTreeTemplate(plugin.getMSG().simplify(target.getName().substring(0, target.getName().length() - 4)),
-				tree);
+		String fName = target.getName().substring(0, target.getName().length() - 4);
+		plugin.addTreeTemplate(plugin.getMSG().simplify(fName), tree);
+		tree.setName(fName);
 
 		List<TreeBlock> blocks = tree.getBlocks();
 
 		int size = blocks.size();
 
-		plugin.getMSG().tell(player, "Capturer", "Successfully captured %d block%s. (Took %s%d%sms)", blocks.size(),
+		plugin.getMSG().tell(player, "Capturer", "Successfully captured %d block%s. (Took %s%d%s ms)", blocks.size(),
 				blocks.size() == 1 ? "" : "s", plugin.getMSG().secondary, System.currentTimeMillis() - time,
 				plugin.getMSG().primary);
 

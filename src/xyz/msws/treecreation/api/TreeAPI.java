@@ -7,6 +7,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 
 import xyz.msws.treecreation.data.AbstractTree;
+import xyz.msws.treecreation.generate.GeneratorFactory;
 import xyz.msws.treecreation.utils.MSG;
 
 public interface TreeAPI extends Plugin {
@@ -21,6 +22,8 @@ public interface TreeAPI extends Plugin {
 	void refreshTreeTemplates();
 
 	void removeTemplate(String name);
+
+	GeneratorFactory getFactory();
 
 	MSG getMSG();
 }

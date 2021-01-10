@@ -14,6 +14,7 @@ import xyz.msws.treecreation.data.CompressedTree;
 import xyz.msws.treecreation.data.NativeTree;
 import xyz.msws.treecreation.data.TreeBlock;
 import xyz.msws.treecreation.data.TreeYML;
+import xyz.msws.treecreation.generate.GeneratorFactory;
 import xyz.msws.treecreation.generate.GeneratorMonitor;
 import xyz.msws.treecreation.utils.MSG;
 
@@ -23,6 +24,7 @@ public class TreePlugin extends JavaPlugin implements TreeAPI {
 	private MSG msg;
 	private Map<String, AbstractTree> templates;
 	private GeneratorMonitor monitor;
+	private GeneratorFactory genFac;
 
 	@Override
 	public void onLoad() {
@@ -44,6 +46,7 @@ public class TreePlugin extends JavaPlugin implements TreeAPI {
 
 		register(this.getTreeFile(), templates);
 
+		genFac = new GeneratorFactory(this);
 		getCommand("tree").setExecutor(new TreeCommand(this));
 	}
 
@@ -109,5 +112,10 @@ public class TreePlugin extends JavaPlugin implements TreeAPI {
 		if (getMSG().simplify(current.getName().substring(0, current.getName().length() - 4)).equals(name)) {
 			current.delete();
 		}
+	}
+
+	@Override
+	public GeneratorFactory getFactory() {
+		return genFac;
 	}
 }

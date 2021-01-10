@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import xyz.msws.treecreation.api.TreeAPI;
 import xyz.msws.treecreation.data.AbstractTree;
 import xyz.msws.treecreation.data.TreeBlock;
 import xyz.msws.treecreation.generate.modifiers.GeneratorModifier;
@@ -13,8 +14,8 @@ import xyz.msws.treecreation.generate.modifiers.GeneratorModifier;
 public class RadialGenerator extends TreeGenerator {
 	private List<TreeBlock> toBuild;
 
-	public RadialGenerator(AbstractTree tree, Location origin) {
-		super(tree, origin);
+	public RadialGenerator(TreeAPI plugin, AbstractTree tree, Location origin) {
+		super(plugin, tree, origin);
 		toBuild = tree.getBlocks();
 
 		toBuild.sort(new Comparator<TreeBlock>() {
@@ -53,5 +54,10 @@ public class RadialGenerator extends TreeGenerator {
 		genModifiers.forEach(GeneratorModifier::onStopped);
 		toBuild.forEach(b -> b.place(origin));
 		toBuild = null;
+	}
+
+	@Override
+	public String getName() {
+		return "Ordered Generator";
 	}
 }

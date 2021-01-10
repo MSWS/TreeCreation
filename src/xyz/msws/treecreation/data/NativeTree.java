@@ -12,6 +12,11 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import xyz.msws.treecreation.data.TreeBlock.BlockType;
 import xyz.msws.treecreation.exceptions.InvalidBlockException;
 
+/**
+ * @deprecated Unoptimized, use {@link CompressedTree}
+ * @author imodm
+ *
+ */
 @SerializableAs("NativeTree")
 public class NativeTree extends AbstractTree {
 

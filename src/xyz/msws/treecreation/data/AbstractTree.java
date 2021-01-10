@@ -7,12 +7,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.StringJoiner;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import xyz.msws.treecreation.data.TreeBlock.BlockType;
@@ -24,6 +25,7 @@ import xyz.msws.treecreation.data.TreeBlock.BlockType;
  *
  */
 public abstract class AbstractTree implements ConfigurationSerializable {
+	private String name;
 	Map<BlockType, List<TreeBlock>> blocks = new HashMap<>();
 
 	/**
@@ -163,12 +165,48 @@ public abstract class AbstractTree implements ConfigurationSerializable {
 		return blocks;
 	}
 
+	public ItemStack getItemStack() {
+		Map<Material, Integer> rep = new HashMap<>();
+		List<TreeBlock> consider = blocks.containsKey(BlockType.LEAF) ? getPart(BlockType.LEAF) : getBlocks();
+		for (TreeBlock tb : consider) {
+			rep.put(tb.getBlock().getMaterial(), rep.getOrDefault(tb.getBlock().getMaterial(), 0) + 1);
+		}
+
+		List<Entry<Material, Integer>> sorted = new ArrayList<Entry<Material, Integer>>(rep.entrySet());
+		sorted.sort(new Comparator<Entry<Material, Integer>>() {
+			@Override
+			public int compare(Entry<Material, Integer> o1, Entry<Material, Integer> o2) {
+				return o1.getValue() == o2.getValue() ? 0 : o1.getValue() > o2.getValue() ? -1 : 1;
+			}
+		});
+
+		Material toUse = Material.AIR;
+		do {
+			toUse = sorted.get(0).getKey();
+			sorted.remove(0);
+		} while (!toUse.isBlock() && !sorted.isEmpty());
+
+		if (toUse.toString().contains("_")) {
+			Material tmp = Material
+					.getMaterial(toUse.toString().substring(0, toUse.toString().indexOf("_")) + "_SAPLING");
+			if (tmp != null)
+				toUse = tmp;
+		}
+
+		ItemStack item = new ItemStack(toUse);
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(ChatColor.RESET + (name == null ? toUse.toString() + "" : name));
+		meta.setLore(getDescription());
+		item.setItemMeta(meta);
+		return item;
+	}
+
 	/**
 	 * Gets a basic description of what blocks makeup the tree TODO
 	 * 
 	 * @return A multi-line string describing the tree
 	 */
-	public String getDescription() {
+	public List<String> getDescription() {
 		Map<Material, Integer> blocks = new HashMap<>();
 		for (List<TreeBlock> bs : this.blocks.values()) {
 			for (TreeBlock b : bs) {
@@ -182,15 +220,14 @@ public abstract class AbstractTree implements ConfigurationSerializable {
 		sorted.sort(new Comparator<Entry<Material, Integer>>() {
 			@Override
 			public int compare(Entry<Material, Integer> a, Entry<Material, Integer> b) {
-				return a.getValue() == b.getValue() ? 0 : a.getValue() > b.getValue() ? 1 : -1;
+				return a.getValue() == b.getValue() ? 0 : a.getValue() > b.getValue() ? -1 : 1;
 			}
 		});
-
-		StringJoiner result = new StringJoiner("\n");
+		List<String> lines = new ArrayList<>();
 		for (Entry<Material, Integer> entry : sorted) {
-			result.add(ChatColor.YELLOW + "" + entry.getValue() + "x " + ChatColor.GRAY + entry.getKey());
+			lines.add(ChatColor.translateAlternateColorCodes('&', "&e" + entry.getValue() + "x &7" + entry.getKey()));
 		}
-		return result.toString();
+		return lines;
 	}
 
 	/**
@@ -206,5 +243,13 @@ public abstract class AbstractTree implements ConfigurationSerializable {
 			return false;
 		AbstractTree tree = (AbstractTree) obj;
 		return tree.getBlocks().equals(this.getBlocks());
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

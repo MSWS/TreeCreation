@@ -29,7 +29,10 @@ public abstract class TreeGenerator implements Listener {
 
 	protected List<GeneratorModifier> genModifiers = new ArrayList<>();
 
-	public TreeGenerator(AbstractTree tree, Location origin) {
+	protected TreeAPI plugin;
+
+	public TreeGenerator(TreeAPI plugin, AbstractTree tree, Location origin) {
+		this.plugin = plugin;
 		this.tree = tree;
 		this.origin = origin;
 	}
@@ -135,6 +138,12 @@ public abstract class TreeGenerator implements Listener {
 		if (!gen.getOrigin().equals(this.getOrigin()))
 			return false;
 		return true;
+	}
+
+	public abstract String getName();
+
+	public String getId() {
+		return plugin.getMSG().simplify(getName());
 	}
 
 }
