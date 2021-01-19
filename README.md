@@ -6,5 +6,5 @@ Current status:
 - [x] Native generation animations and effects
 - [x] Saveable tree structures
 - [x] Easy to edit generations
-- [] Minecraft GUI implementation
-- [] Database support
+- [ ] Minecraft GUI implementation
+- [ ] Database support
